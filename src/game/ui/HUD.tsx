@@ -1,29 +1,6 @@
-import type { CSSProperties } from 'react';
 import { useGameStore } from '../state/gameStore';
 import { useCameraDebugStore } from '../camera/cameraDebugStore';
-
-const statsStyle: CSSProperties = {
-  position: 'absolute',
-  top: 16,
-  left: 16,
-  color: 'white',
-  fontFamily: 'monospace',
-  fontSize: 18,
-  pointerEvents: 'none',
-  textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
-};
-
-const debugStyle: CSSProperties = {
-  position: 'absolute',
-  top: 16,
-  right: 16,
-  color: 'white',
-  fontFamily: 'monospace',
-  fontSize: 14,
-  pointerEvents: 'none',
-  textShadow: '1px 1px 2px rgba(0,0,0,0.7)',
-  textAlign: 'right',
-};
+import s from './ui.module.css';
 
 export function HUD() {
   const score = useGameStore((s) => s.score);
@@ -34,12 +11,12 @@ export function HUD() {
 
   return (
     <>
-      <div style={statsStyle}>
+      <div className={s.stats}>
         <div>Score: {score}</div>
         <div>Lives: {'♥'.repeat(lives)}</div>
         <div>Time: {elapsedTime.toFixed(1)}s</div>
       </div>
-      <div style={debugStyle}>
+      <div className={s.debug}>
         <div>cam pos: [{camPos.join(', ')}]</div>
         <div>cam target: [{camTarget.join(', ')}]</div>
       </div>

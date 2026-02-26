@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
+import s from './docs.module.css';
 
 declare global {
   interface Window {
@@ -57,24 +58,24 @@ export function DocsPage() {
   }, []);
 
   return (
-    <div style={pageStyle}>
-      <nav style={navStyle}>
-        <Link to="/" style={linkStyle}>Play Game</Link>
-        <span style={titleStyle}>Jumper — Architecture Docs</span>
+    <div className={s.page}>
+      <nav className={s.nav}>
+        <Link to="/" className={s.navLink}>Play Game</Link>
+        <span className={s.navTitle}>Jumper — Architecture Docs</span>
       </nav>
 
-      <main style={mainStyle}>
-        <section style={sectionStyle}>
-          <h1 style={h1Style}>Jumper Game Architecture</h1>
-          <p style={descStyle}>
+      <main className={s.main}>
+        <section className={s.section}>
+          <h1 className={s.h1}>Jumper Game Architecture</h1>
+          <p className={s.desc}>
             A third-person 3D platformer where the player jumps across a sea of sine-wave-oscillating bricks
             to reach the end platform. Built with React Three Fiber on React 19 + Vite + TypeScript.
           </p>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>Tech Stack</h2>
-          <div style={gridStyle}>
+        <section className={s.section}>
+          <h2 className={s.h2}>Tech Stack</h2>
+          <div className={s.grid}>
             {[
               ['React Three Fiber', 'React renderer for Three.js — declarative 3D scene graph'],
               ['@react-three/drei', 'Utility helpers: camera controls, text, shaders'],
@@ -83,17 +84,17 @@ export function DocsPage() {
               ['Vite 7 + TypeScript', 'Fast dev server with full type safety'],
               ['Nx', 'Monorepo tooling and task orchestration'],
             ].map(([name, desc]) => (
-              <div key={name} style={cardStyle}>
-                <strong style={cardTitleStyle}>{name}</strong>
-                <span style={cardDescStyle}>{desc}</span>
+              <div key={name} className={s.card}>
+                <strong className={s.cardTitle}>{name}</strong>
+                <span className={s.cardDesc}>{desc}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>Architecture Principles</h2>
-          <ol style={listStyle}>
+        <section className={s.section}>
+          <h2 className={s.h2}>Architecture Principles</h2>
+          <ol className={s.list}>
             <li><strong>Entities</strong> — React components rendering a single game object (mesh + rigid body)</li>
             <li><strong>Systems</strong> — Custom hooks encapsulating one slice of game logic (input, physics, animation)</li>
             <li><strong>State</strong> — Zustand store, decoupled from rendering</li>
@@ -101,14 +102,14 @@ export function DocsPage() {
           </ol>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>Data Flow</h2>
-          <p style={descStyle}>
+        <section className={s.section}>
+          <h2 className={s.h2}>Data Flow</h2>
+          <p className={s.desc}>
             How input propagates through systems, state, and rendering layers.
-            Dashed lines indicate reads via <code style={inlineCodeStyle}>getState()</code> (no React subscription).
+            Dashed lines indicate reads via <code className={s.inlineCode}>getState()</code> (no React subscription).
           </p>
-          <figure style={figureStyle}>
-            <div className="mermaid" style={diagramStyle}>{`
+          <figure className={s.figure}>
+            <div className={`mermaid ${s.diagram}`}>{`
 flowchart TD
     subgraph input ["🎮 Input Layer"]
         Keyboard["⌨️ Keyboard Events"]
@@ -152,18 +153,18 @@ flowchart TD
     Store --> Camera
     Store --> UI
             `}</div>
-            <figcaption style={captionStyle}>Input → Systems → State → Rendering pipeline</figcaption>
+            <figcaption className={s.caption}>Input → Systems → State → Rendering pipeline</figcaption>
           </figure>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>Game State Machine</h2>
-          <p style={descStyle}>
-            Route transitions shown alongside state changes. The Zustand <code style={inlineCodeStyle}>phase</code> drives
+        <section className={s.section}>
+          <h2 className={s.h2}>Game State Machine</h2>
+          <p className={s.desc}>
+            Route transitions shown alongside state changes. The Zustand <code className={s.inlineCode}>phase</code> drives
             in-game sub-states while React Router handles top-level screen navigation.
           </p>
-          <figure style={figureStyle}>
-            <div className="mermaid" style={stateDiagramStyle}>{`
+          <figure className={s.figure}>
+            <div className={`mermaid ${s.diagram}`}>{`
 stateDiagram-v2
     [*] --> Menu: /
     Menu --> Playing: Start Game → /play
@@ -178,25 +179,25 @@ stateDiagram-v2
     Won --> Menu: Play Again → /
     Lost --> Menu: Play Again → /
             `}</div>
-            <figcaption style={captionStyle}>Phase transitions and their corresponding routes</figcaption>
+            <figcaption className={s.caption}>Phase transitions and their corresponding routes</figcaption>
           </figure>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>State Management</h2>
-          <p style={descStyle}>
-            Game state is managed by a single Zustand store (<code style={inlineCodeStyle}>gameStore</code>).
+        <section className={s.section}>
+          <h2 className={s.h2}>State Management</h2>
+          <p className={s.desc}>
+            Game state is managed by a single Zustand store (<code className={s.inlineCode}>gameStore</code>).
             Screen-level navigation is handled by React Router, while in-game sub-states
-            are driven by the store's <code style={inlineCodeStyle}>phase</code> field.
+            are driven by the store's <code className={s.inlineCode}>phase</code> field.
           </p>
 
-          <h3 style={h3Style}>Store Shape</h3>
-          <table style={tableStyle}>
+          <h3 className={s.h3}>Store Shape</h3>
+          <table className={s.table}>
             <thead>
               <tr>
-                <th style={thStyle}>Field</th>
-                <th style={thStyle}>Type</th>
-                <th style={thStyle}>Purpose</th>
+                <th className={s.th}>Field</th>
+                <th className={s.th}>Type</th>
+                <th className={s.th}>Purpose</th>
               </tr>
             </thead>
             <tbody>
@@ -212,41 +213,41 @@ stateDiagram-v2
                 ['resetCount', 'number', 'Increments on respawn (signals systems)'],
               ].map(([field, type, purpose]) => (
                 <tr key={field}>
-                  <td style={tdKeyStyle}>{field}</td>
-                  <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 13 }}>{type}</td>
-                  <td style={tdStyle}>{purpose}</td>
+                  <td className={s.tdKey}>{field}</td>
+                  <td className={s.tdType}>{type}</td>
+                  <td className={s.td}>{purpose}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <h3 style={h3Style}>Dual Routing Strategy</h3>
-          <div style={gridStyle}>
+          <h3 className={s.h3}>Dual Routing Strategy</h3>
+          <div className={s.grid}>
             {[
               ['React Router', 'Top-level screens (menu, play, game-over, you-win). URL-driven, supports refresh and deep-linking.'],
               ['Zustand phase', 'In-game sub-states (playing, paused, level_up). Drives HUD, pause menu, and level-up overlay within the /play route.'],
               ['useScreenSync', 'Hook that syncs the mounted route to currentScreen on mount, so SceneSwitch renders the correct 3D scene after a page refresh.'],
               ['navigateTo()', 'Imperative navigation for R3F hooks (e.g. collision handlers) that live outside the React Router tree.'],
             ].map(([name, desc]) => (
-              <div key={name} style={cardStyle}>
-                <strong style={cardTitleStyle}>{name}</strong>
-                <span style={cardDescStyle}>{desc}</span>
+              <div key={name} className={s.card}>
+                <strong className={s.cardTitle}>{name}</strong>
+                <span className={s.cardDesc}>{desc}</span>
               </div>
             ))}
           </div>
 
-          <h3 style={h3Style}>Access Patterns</h3>
-          <ul style={listStyle}>
-            <li><strong>UI components</strong> — Use selector hooks (<code style={inlineCodeStyle}>useGameStore(s =&gt; s.score)</code>) to subscribe and re-render on change.</li>
-            <li><strong>useFrame loops</strong> — Use <code style={inlineCodeStyle}>useGameStore.getState()</code> to read without creating subscriptions (avoids 60fps re-renders across all bricks).</li>
-            <li><strong>Event handlers</strong> — Use <code style={inlineCodeStyle}>useGameStore.getState().actionName()</code> for fire-and-forget mutations (e.g. collision callbacks).</li>
-            <li><strong>Player position</strong> — Mutated in-place (never triggers <code style={inlineCodeStyle}>set()</code>) since no component subscribes to it.</li>
+          <h3 className={s.h3}>Access Patterns</h3>
+          <ul className={s.list}>
+            <li><strong>UI components</strong> — Use selector hooks (<code className={s.inlineCode}>useGameStore(s =&gt; s.score)</code>) to subscribe and re-render on change.</li>
+            <li><strong>useFrame loops</strong> — Use <code className={s.inlineCode}>useGameStore.getState()</code> to read without creating subscriptions (avoids 60fps re-renders across all bricks).</li>
+            <li><strong>Event handlers</strong> — Use <code className={s.inlineCode}>useGameStore.getState().actionName()</code> for fire-and-forget mutations (e.g. collision callbacks).</li>
+            <li><strong>Player position</strong> — Mutated in-place (never triggers <code className={s.inlineCode}>set()</code>) since no component subscribes to it.</li>
           </ul>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>Lives & Respawn</h2>
-          <ul style={listStyle}>
+        <section className={s.section}>
+          <h2 className={s.h2}>Lives & Respawn</h2>
+          <ul className={s.list}>
             <li>Player starts with <strong>3 lives</strong> (4 total attempts)</li>
             <li>Falling below the death plane costs 1 life and triggers a respawn</li>
             <li>Game over only when falling with <strong>0 lives</strong> remaining</li>
@@ -255,9 +256,9 @@ stateDiagram-v2
           </ul>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>Directory Structure</h2>
-          <pre style={codeStyle}>{`src/game/
+        <section className={s.section}>
+          <h2 className={s.h2}>Directory Structure</h2>
+          <pre className={s.codeBlock}>{`src/game/
 ├── GameLayout.tsx               # Shared Canvas + Physics layout (all routes)
 ├── navigation.ts                # Imperative navigate for R3F hooks
 ├── screens/
@@ -312,25 +313,25 @@ stateDiagram-v2
 │   ├── HUD.tsx                  # Score, lives, timer
 │   ├── PauseMenu.tsx            # Pause overlay
 │   ├── LevelUpOverlay.tsx       # Level-up transition (2s auto-advance)
-│   └── styles.ts                # Shared overlay/button styles
+│   └── ui.module.css            # Shared UI styles
 └── dev/
     ├── devStore.ts              # Runtime config store
     ├── DevPanel.tsx             # Collapsible debug panel
     ├── PhysicsControls.tsx      # Physics sliders
     ├── CameraControls.tsx       # Camera sliders
     ├── Slider.tsx               # Reusable slider
-    ├── styles.ts                # Shared dev panel styles
+    ├── dev.module.css           # Dev panel styles
     ├── useDevGravity.ts         # Runtime gravity sync
     └── useDevDamping.ts         # Runtime damping sync`}</pre>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>Controls</h2>
-          <table style={tableStyle}>
+        <section className={s.section}>
+          <h2 className={s.h2}>Controls</h2>
+          <table className={s.table}>
             <thead>
               <tr>
-                <th style={thStyle}>Key</th>
-                <th style={thStyle}>Action</th>
+                <th className={s.th}>Key</th>
+                <th className={s.th}>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -344,17 +345,17 @@ stateDiagram-v2
                 ['Right-click drag', 'Pan camera'],
               ].map(([key, action]) => (
                 <tr key={key}>
-                  <td style={tdKeyStyle}>{key}</td>
-                  <td style={tdStyle}>{action}</td>
+                  <td className={s.tdKey}>{key}</td>
+                  <td className={s.td}>{action}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>Visual Theme</h2>
-          <div style={gridStyle}>
+        <section className={s.section}>
+          <h2 className={s.h2}>Visual Theme</h2>
+          <div className={s.grid}>
             {[
               ['Background', '#1a1a1a', '#1a1a1a'],
               ['Bricks (base)', '#8a8a8a', '#8a8a8a'],
@@ -363,24 +364,24 @@ stateDiagram-v2
               ['Start Platform', '#39ff14', '#39ff14'],
               ['End Platform', '#ff355e', '#ff355e'],
             ].map(([label, color, bg]) => (
-              <div key={label} style={{ ...cardStyle, borderLeft: `4px solid ${bg}` }}>
-                <div style={colorSwatchRowStyle}>
-                  <div style={{ ...colorSwatchStyle, background: bg, boxShadow: `0 0 8px ${bg}` }} />
-                  <strong style={cardTitleStyle}>{label}</strong>
+              <div key={label} className={s.card} style={{ borderLeft: `4px solid ${bg}` }}>
+                <div className={s.colorSwatchRow}>
+                  <div className={s.colorSwatch} style={{ background: bg, boxShadow: `0 0 8px ${bg}` }} />
+                  <strong className={s.cardTitle}>{label}</strong>
                 </div>
-                <code style={colorCodeStyle}>{color}</code>
+                <code className={s.colorCode}>{color}</code>
               </div>
             ))}
           </div>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>Performance Pitfalls</h2>
-          <p style={descStyle}>
+        <section className={s.section}>
+          <h2 className={s.h2}>Performance Pitfalls</h2>
+          <p className={s.desc}>
             React Three Fiber apps must carefully manage when React reconciliation runs vs. when Three.js objects
             are updated imperatively. Here are the rules this codebase follows:
           </p>
-          <ul style={listStyle}>
+          <ul className={s.list}>
             <li><strong>useFrame reads via getState()</strong> — Never use Zustand selector hooks inside useFrame callbacks. Selectors create React subscriptions; multiplied across 40+ bricks, each state change triggers mass re-renders.</li>
             <li><strong>Refs over useState for visuals</strong> — Collision-driven effects (hit glow color) use <code>useRef</code> instead of <code>useState</code>. Material properties are set imperatively by <code>useBrickLifecycle</code>, so Brick components never re-render after mount.</li>
             <li><strong>Mutate position in-place</strong> — Player position is written 60x/sec but no React component subscribes to it. The array is mutated directly, bypassing <code>set()</code> entirely.</li>
@@ -391,9 +392,9 @@ stateDiagram-v2
           </ul>
         </section>
 
-        <section style={sectionStyle}>
-          <h2 style={h2Style}>Extensibility</h2>
-          <ul style={listStyle}>
+        <section className={s.section}>
+          <h2 className={s.h2}>Extensibility</h2>
+          <ul className={s.list}>
             <li><strong>New levels</strong> — Add entries to the <code>LEVELS</code> array in <code>levelConfig.ts</code></li>
             <li><strong>New entities</strong> — Create a component in <code>entities/</code>, wire into <code>GameScene.tsx</code></li>
             <li><strong>New mechanics</strong> — Add a system hook in <code>systems/</code>, register in <code>useGameLoop</code></li>
@@ -404,208 +405,3 @@ stateDiagram-v2
     </div>
   );
 }
-
-const pageStyle: React.CSSProperties = {
-  minHeight: '100vh',
-  background: '#0d0d0d',
-  color: '#e0e0e0',
-  fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-};
-
-const navStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 24,
-  padding: '16px 32px',
-  borderBottom: '1px solid #222',
-  position: 'sticky',
-  top: 0,
-  background: 'rgba(13,13,13,0.95)',
-  backdropFilter: 'blur(8px)',
-  zIndex: 10,
-};
-
-const linkStyle: React.CSSProperties = {
-  color: '#00e5ff',
-  textDecoration: 'none',
-  fontSize: 14,
-  fontWeight: 600,
-  padding: '6px 16px',
-  border: '1px solid #00e5ff',
-  borderRadius: 6,
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: 16,
-  fontWeight: 700,
-  color: '#fff',
-};
-
-const mainStyle: React.CSSProperties = {
-  maxWidth: 900,
-  margin: '0 auto',
-  padding: '40px 24px 80px',
-};
-
-const sectionStyle: React.CSSProperties = {
-  marginBottom: 48,
-};
-
-const h1Style: React.CSSProperties = {
-  fontSize: 36,
-  fontWeight: 800,
-  color: '#fff',
-  margin: '0 0 12px',
-};
-
-const h2Style: React.CSSProperties = {
-  fontSize: 22,
-  fontWeight: 700,
-  color: '#00e5ff',
-  margin: '0 0 16px',
-  paddingBottom: 8,
-  borderBottom: '1px solid #222',
-};
-
-const h3Style: React.CSSProperties = {
-  fontSize: 17,
-  fontWeight: 600,
-  color: '#b0bec5',
-  margin: '28px 0 12px',
-};
-
-const descStyle: React.CSSProperties = {
-  fontSize: 16,
-  lineHeight: 1.6,
-  color: '#aaa',
-};
-
-const gridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-  gap: 12,
-};
-
-const cardStyle: React.CSSProperties = {
-  background: '#161616',
-  border: '1px solid #2a2a2a',
-  borderRadius: 8,
-  padding: '14px 16px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 6,
-};
-
-const cardTitleStyle: React.CSSProperties = {
-  color: '#fff',
-  fontSize: 14,
-};
-
-const cardDescStyle: React.CSSProperties = {
-  color: '#888',
-  fontSize: 13,
-  lineHeight: 1.4,
-};
-
-const listStyle: React.CSSProperties = {
-  paddingLeft: 20,
-  lineHeight: 2,
-  fontSize: 15,
-};
-
-const figureStyle: React.CSSProperties = {
-  margin: '16px 0 0',
-};
-
-const captionStyle: React.CSSProperties = {
-  marginTop: 10,
-  fontSize: 12,
-  color: '#666',
-  fontStyle: 'italic',
-  textAlign: 'center',
-};
-
-const inlineCodeStyle: React.CSSProperties = {
-  background: '#1e1e1e',
-  padding: '2px 6px',
-  borderRadius: 4,
-  fontSize: '0.9em',
-  color: '#00e5ff',
-  fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-};
-
-const diagramStyle: React.CSSProperties = {
-  background: 'linear-gradient(145deg, #111111, #161616)',
-  border: '1px solid #1e3a4a',
-  borderRadius: 12,
-  padding: '32px 24px',
-  textAlign: 'center',
-  overflow: 'auto',
-  boxShadow: '0 0 20px rgba(0,229,255,0.05), inset 0 1px 0 rgba(255,255,255,0.03)',
-};
-
-const stateDiagramStyle: React.CSSProperties = {
-  ...diagramStyle,
-};
-
-const codeStyle: React.CSSProperties = {
-  background: '#161616',
-  border: '1px solid #2a2a2a',
-  borderRadius: 8,
-  padding: 20,
-  fontSize: 13,
-  lineHeight: 1.5,
-  fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-  color: '#ccc',
-  overflow: 'auto',
-  display: 'block',
-};
-
-const tableStyle: React.CSSProperties = {
-  width: '100%',
-  borderCollapse: 'collapse',
-};
-
-const thStyle: React.CSSProperties = {
-  textAlign: 'left',
-  padding: '10px 16px',
-  borderBottom: '2px solid #333',
-  color: '#00e5ff',
-  fontSize: 13,
-  fontWeight: 600,
-  textTransform: 'uppercase',
-  letterSpacing: 1,
-};
-
-const tdKeyStyle: React.CSSProperties = {
-  padding: '10px 16px',
-  borderBottom: '1px solid #1e1e1e',
-  fontFamily: 'monospace',
-  color: '#fff',
-  fontWeight: 600,
-  fontSize: 14,
-};
-
-const tdStyle: React.CSSProperties = {
-  padding: '10px 16px',
-  borderBottom: '1px solid #1e1e1e',
-  color: '#aaa',
-  fontSize: 14,
-};
-
-const colorSwatchRowStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 10,
-};
-
-const colorSwatchStyle: React.CSSProperties = {
-  width: 20,
-  height: 20,
-  borderRadius: 4,
-};
-
-const colorCodeStyle: React.CSSProperties = {
-  color: '#888',
-  fontSize: 13,
-};

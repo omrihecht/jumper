@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../state/gameStore';
 import { useScreenSync } from '../state/useScreenSync';
-import { overlayStyle, headingStyle, buttonStyle, scoreTextStyle, timeTextStyle } from '../ui/styles';
+import s from '../ui/ui.module.css';
 
 /** Game-over overlay showing final score and a retry button. */
 export function GameOverScreen() {
@@ -16,11 +16,11 @@ export function GameOverScreen() {
   };
 
   return (
-    <div style={overlayStyle}>
-      <h1 style={headingStyle}>Game Over</h1>
-      <p style={scoreTextStyle}>Score: {score}</p>
-      <p style={timeTextStyle}>Time: {elapsedTime.toFixed(1)}s</p>
-      <button onClick={handlePlayAgain} style={buttonStyle}>
+    <div className={s.overlay}>
+      <h1 className={s.heading}>Game Over</h1>
+      <p className={s.scoreText}>Score: {score}</p>
+      <p className={s.timeText}>Time: {elapsedTime.toFixed(1)}s</p>
+      <button onClick={handlePlayAgain} className={s.button}>
         Play Again
       </button>
     </div>

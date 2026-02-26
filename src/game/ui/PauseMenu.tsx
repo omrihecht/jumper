@@ -1,11 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../state/gameStore';
-import { overlayStyle, headingStyle, buttonStyle } from './styles';
-
-const pauseHeadingStyle: React.CSSProperties = {
-  ...headingStyle,
-  fontSize: 48,
-};
+import s from './ui.module.css';
 
 /**
  * Pause overlay with resume and quit options.
@@ -21,12 +16,12 @@ export function PauseMenu() {
   };
 
   return (
-    <div style={overlayStyle}>
-      <h1 style={pauseHeadingStyle}>Paused</h1>
-      <button onClick={resumeGame} style={buttonStyle}>
+    <div className={s.overlay}>
+      <h1 className={s.pauseHeading}>Paused</h1>
+      <button onClick={resumeGame} className={s.button}>
         Resume
       </button>
-      <button onClick={handleQuit} style={buttonStyle}>
+      <button onClick={handleQuit} className={s.button}>
         Quit to Menu
       </button>
     </div>

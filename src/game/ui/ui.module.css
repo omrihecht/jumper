@@ -1,0 +1,108 @@
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  color: white;
+  font-family: sans-serif;
+  gap: 16px;
+}
+
+.overlayTransparent {
+  composes: overlay;
+  background: transparent;
+  gap: 24px;
+}
+
+.heading {
+  font-family: 'Caveat', cursive;
+  font-size: 120px;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.headingGlow {
+  composes: heading;
+  text-shadow: 0 0 30px rgba(79, 195, 247, 0.8);
+}
+
+.button {
+  padding: 16px 48px;
+  font-size: 22px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: #00e5ff;
+  color: #0a0a0a;
+  font-weight: bold;
+  transition: transform 0.15s ease;
+}
+
+.button:hover {
+  transform: scale(1.05);
+}
+
+.scoreText {
+  font-size: 24px;
+}
+
+.timeText {
+  font-size: 20px;
+}
+
+/* HUD */
+
+.stats {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  color: white;
+  font-family: monospace;
+  font-size: 18px;
+  pointer-events: none;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+}
+
+.debug {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  color: white;
+  font-family: monospace;
+  font-size: 14px;
+  pointer-events: none;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+  text-align: right;
+}
+
+/* PauseMenu */
+
+.pauseHeading {
+  font-family: 'Caveat', cursive;
+  font-size: 72px;
+  margin: 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* LevelUpOverlay */
+
+.levelUpOverlay {
+  composes: overlay;
+  background: rgba(0, 0, 0, 0.55);
+  gap: 12px;
+}
+
+.levelUpHeading {
+  font-family: 'Caveat', cursive;
+  font-size: 84px;
+  margin: 0;
+  text-shadow: 0 0 30px rgba(79, 195, 247, 0.8);
+}
+
+.subText {
+  font-size: 22px;
+  opacity: 0.7;
+}

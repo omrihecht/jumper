@@ -7,8 +7,7 @@ import { CAMERA, PHYSICS } from './config/gameConfig';
 import { DevPanel } from './dev/DevPanel';
 import { registerNavigate } from './navigation';
 import { SceneSwitch } from './scenes/SceneSwitch';
-
-const rootStyle = { width: '100vw', height: '100vh', overflow: 'hidden' } as const;
+import s from './game.module.css';
 
 const cameraProps = {
   fov: CAMERA.fov,
@@ -27,7 +26,7 @@ export function GameLayout() {
   }, [navigate]);
 
   return (
-    <div style={rootStyle}>
+    <div className={s.root}>
       <Canvas camera={cameraProps}>
         <Suspense fallback={null}>
           <Physics gravity={gravityVec}>

@@ -1,6 +1,6 @@
 import { useDevStore } from './devStore';
 import { Slider } from './Slider';
-import { sectionHeaderStyle } from './styles';
+import s from './dev.module.css';
 
 export function CameraControls() {
   const camera = useDevStore((s) => s.camera);
@@ -8,7 +8,7 @@ export function CameraControls() {
 
   return (
     <div>
-      <div style={sectionHeaderStyle}>Camera</div>
+      <div className={s.sectionHeader}>Camera</div>
       <Slider label="FOV" value={camera.fov} min={30} max={120} step={1} onChange={(v) => setCamera({ fov: v })} />
     </div>
   );
