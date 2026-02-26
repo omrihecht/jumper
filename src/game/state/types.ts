@@ -9,7 +9,6 @@ export type Vec3 = [x: number, y: number, z: number];
 /** Player-specific runtime state. */
 export interface PlayerState {
   position: Vec3;
-  velocity: Vec3;
   isGrounded: boolean;
   isJumping: boolean;
 }
@@ -34,8 +33,6 @@ export interface GameActions {
   winGame: () => void;
   loseGame: () => void;
   returnToMenu: () => void;
-  setPlayerPosition: (pos: Vec3) => void;
-  setPlayerVelocity: (vel: Vec3) => void;
   setPlayerGrounded: (grounded: boolean) => void;
   setPlayerJumping: (jumping: boolean) => void;
   addScore: (points: number) => void;

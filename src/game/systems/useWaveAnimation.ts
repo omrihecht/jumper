@@ -16,12 +16,11 @@ export function useWaveAnimation(
   baseZ: number,
   phaseOffset: number
 ) {
-  const level = useGameStore((s) => s.currentLevel);
-
   useFrame(({ clock }) => {
     const body = rigidBodyRef.current;
     if (!body) return;
 
+    const level = useGameStore.getState().currentLevel;
     const t = clock.getElapsedTime();
     const y = level.waveAmplitude * Math.sin(level.waveFrequency * t + phaseOffset);
 

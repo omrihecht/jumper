@@ -1,40 +1,23 @@
 import { useRef, useCallback } from 'react';
 import { RigidBody } from '@react-three/rapier';
-import type { RapierRigidBody, CollisionEnterPayload } from '@react-three/rapier';
-import { useFrame } from '@react-three/fiber';
+import type { RapierRigidBody } from '@react-three/rapier';
 import { PLAYER, PHYSICS } from '../config/gameConfig';
 import { usePlayerController } from '../systems/usePlayerController';
 import { useJumpPhysics } from '../systems/useJumpPhysics';
+import { usePlayerReset } from '../systems/usePlayerReset';
+import { useDevDamping } from '../dev/useDevDamping';
 import { useGameStore } from '../state/gameStore';
-import { useDevStore } from '../dev/devStore';
 
 export function Player() {
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const groundContactCount = useRef(0);
-  const lastResetCount = useRef(0);
 
   usePlayerController(rigidBodyRef);
   useJumpPhysics(rigidBodyRef);
+  usePlayerReset(rigidBodyRef, groundContactCount);
+  useDevDamping(rigidBodyRef);
 
-  useFrame(() => {
-    const body = rigidBodyRef.current;
-    if (!body) return;
-
-    const { resetCount } = useGameStore.getState();
-    if (resetCount !== lastResetCount.current) {
-      lastResetCount.current = resetCount;
-      const [sx, sy, sz] = PLAYER.startPosition;
-      body.setTranslation({ x: sx, y: sy, z: sz }, true);
-      body.setLinvel({ x: 0, y: 0, z: 0 }, true);
-      body.setAngvel({ x: 0, y: 0, z: 0 }, true);
-      groundContactCount.current = 0;
-    }
-
-    const damping = useDevStore.getState().physics.playerLinearDamping;
-    body.setLinearDamping(damping);
-  });
-
-  const onCollisionEnter = useCallback((_payload: CollisionEnterPayload) => {
+  const onCollisionEnter = useCallback(() => {
     groundContactCount.current++;
     useGameStore.getState().setPlayerGrounded(true);
   }, []);

@@ -5,7 +5,6 @@ import type { GameState, GameStore, PlayerState, Vec3 } from './types';
 
 const initialPlayer: PlayerState = {
   position: [...PLAYER.startPosition] as Vec3,
-  velocity: [0, 0, 0],
   isGrounded: false,
   isJumping: false,
 };
@@ -50,17 +49,15 @@ export const useGameStore = create<GameStore>((set) => ({
 
   returnToMenu: () => set({ ...initialState, player: { ...initialPlayer } }),
 
-  setPlayerPosition: (position) =>
-    set((s) => ({ player: { ...s.player, position } })),
+  setPlayerGrounded: (isGrounded) => {
+    if (useGameStore.getState().player.isGrounded === isGrounded) return;
+    set((s) => ({ player: { ...s.player, isGrounded } }));
+  },
 
-  setPlayerVelocity: (velocity) =>
-    set((s) => ({ player: { ...s.player, velocity } })),
-
-  setPlayerGrounded: (isGrounded) =>
-    set((s) => ({ player: { ...s.player, isGrounded } })),
-
-  setPlayerJumping: (isJumping) =>
-    set((s) => ({ player: { ...s.player, isJumping } })),
+  setPlayerJumping: (isJumping) => {
+    if (useGameStore.getState().player.isJumping === isJumping) return;
+    set((s) => ({ player: { ...s.player, isJumping } }));
+  },
 
   addScore: (points) => set((s) => ({ score: s.score + points })),
 
@@ -70,12 +67,16 @@ export const useGameStore = create<GameStore>((set) => ({
       return { lives: s.lives - 1 };
     }),
 
-  tick: (delta) =>
-    set((s) =>
-      s.phase === 'playing'
-        ? { elapsedTime: s.elapsedTime + delta }
-        : s
-    ),
+  tick: (delta) => {
+    const s = useGameStore.getState();
+    if (s.phase !== 'playing') return;
+    const next = s.elapsedTime + delta;
+    if (Math.floor(next * 10) !== Math.floor(s.elapsedTime * 10)) {
+      set({ elapsedTime: next });
+    } else {
+      s.elapsedTime = next;
+    }
+  },
 
   resetPlayer: () =>
     set((s) => ({

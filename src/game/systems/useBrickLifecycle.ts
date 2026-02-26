@@ -1,27 +1,33 @@
+import type { MutableRefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import type { RapierRigidBody } from '@react-three/rapier';
+import { Color } from 'three';
 import type { Group, Mesh, MeshPhysicalMaterial, LineSegments, LineBasicMaterial } from 'three';
 import { BRICK_LIFECYCLE } from '../config/gameConfig';
 
 const HIDE_Y = -500;
+const BASE_COLOR = '#8a8a8a';
 const BASE_OPACITY = 0.35;
 const HIT_OPACITY = 0.55;
 const EDGE_BASE_OPACITY = 0.4;
+const BASE_EMISSIVE = new Color(BASE_COLOR).multiplyScalar(0.05);
+const _color = new Color();
 
 /**
- * Cycles a brick's Y-scale through a sine curve (0 → 1 → 0),
- * then holds it invisible for a pause before repeating.
+ * Manages the full visual lifecycle of a brick each frame:
+ *   - Y-scale sine curve (grow → shrink → vanish → pause → repeat)
+ *   - Top-anchored scaling
+ *   - Opacity fade near zero scale
+ *   - Hit glow color/emissive (reads hitColorRef from useBrickHitGlow)
+ *   - Rigid body teleport when vanished
  *
  * Must be registered after useWaveAnimation so it can override
- * the body position — when the brick is gone the body is moved
- * far below the scene, physically removing the surface from
- * under the player.
- *
- * Below the fade threshold, opacity ramps down to 0.
+ * the body position.
  */
 export function useBrickLifecycle(
   rigidBodyRef: React.RefObject<RapierRigidBody | null>,
   meshGroupRef: React.RefObject<Group | null>,
+  hitColorRef: MutableRefObject<string | null>,
   phaseOffset: number,
   brickHeight: number,
 ) {
@@ -46,10 +52,23 @@ export function useBrickLifecycle(
     group.visible = scale > 0.001;
 
     const fadeAlpha = scale < fadeThreshold ? scale / fadeThreshold : 1;
+    const hitColor = hitColorRef.current;
+    const isHit = hitColor !== null;
 
     const mesh = group.children[0] as Mesh;
     const meshMat = mesh.material as MeshPhysicalMaterial;
-    const isHit = meshMat.emissiveIntensity > 1;
+
+    if (isHit) {
+      _color.set(hitColor);
+      meshMat.color.copy(_color);
+      meshMat.emissive.copy(_color);
+      meshMat.emissiveIntensity = 1.5;
+    } else {
+      meshMat.color.set(BASE_COLOR);
+      meshMat.emissive.copy(BASE_EMISSIVE);
+      meshMat.emissiveIntensity = 0.1;
+    }
+
     meshMat.opacity = (isHit ? HIT_OPACITY : BASE_OPACITY) * fadeAlpha;
 
     const edges = group.children[1] as LineSegments;

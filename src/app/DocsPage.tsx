@@ -77,7 +77,9 @@ flowchart TD
     subgraph systems [Systems - Custom Hooks]
         PlayerCtrl[usePlayerController]
         JumpPhys[useJumpPhysics]
+        PlayerReset[usePlayerReset]
         WaveAnim[useWaveAnimation]
+        Lifecycle[useBrickLifecycle]
         Collision[useCollisionDetection]
         GameLoop[useGameLoop]
     end
@@ -96,15 +98,14 @@ flowchart TD
 
     Keyboard --> PlayerCtrl
     Touch --> PlayerCtrl
-    PlayerCtrl --> Store
-    Store --> JumpPhys
-    Store --> WaveAnim
+    PlayerCtrl -.->|mutate in-place| Store
+    Store -.->|getState| JumpPhys
+    Store -.->|getState| WaveAnim
     JumpPhys --> Store
     WaveAnim --> BrickSea
+    Lifecycle --> BrickSea
     Collision --> Store
-    GameLoop --> PlayerCtrl
-    GameLoop --> JumpPhys
-    GameLoop --> WaveAnim
+    PlayerReset -.->|getState| Store
     GameLoop --> Collision
     Store --> Player
     Store --> Camera
@@ -148,18 +149,20 @@ stateDiagram-v2
 │   ├── MenuScene.tsx            # Start screen
 │   └── GameOverScene.tsx        # Win/lose screen
 ├── entities/
-│   ├── Player.tsx               # Player mesh + rigid body + respawn
-│   ├── Brick.tsx                # Oscillating brick (delegates to hooks)
+│   ├── Player.tsx               # Player cube (delegates to 4 hooks)
+│   ├── Brick.tsx                # Brick — no re-renders after mount
 │   ├── BrickSea.tsx             # Grid manager
 │   ├── StartPlatform.tsx        # Spawn platform (shadow + translucent)
 │   ├── EndPlatform.tsx          # Goal platform (triggers win, +1 life)
-│   └── ShadowGroup.tsx          # Reusable multi-layer shadow plane
+│   └── ShadowGroup.tsx          # Shared-geometry shadow planes
 ├── systems/
-│   ├── usePlayerController.ts   # Keyboard → velocity
+│   ├── usePlayerController.ts   # Keyboard → velocity (mutates pos in-place)
 │   ├── useJumpPhysics.ts        # Jump + coyote time + input buffer
+│   ├── usePlayerReset.ts        # Respawn teleport on resetCount change
 │   ├── useWaveAnimation.ts      # Per-brick sine wave
+│   ├── useBrickLifecycle.ts     # Brick scale/fade/vanish + material mgmt
 │   ├── useBrickShadow.ts        # Player proximity shadow on bricks
-│   ├── useBrickHitGlow.ts       # Neon glow on player contact
+│   ├── useBrickHitGlow.ts       # Collision tracking via ref (no state)
 │   ├── useCollisionDetection.ts # Death plane check (single-trigger guard)
 │   └── useGameLoop.ts           # Frame tick coordinator
 ├── state/
@@ -171,6 +174,7 @@ stateDiagram-v2
 │   └── controls.ts              # Key bindings
 ├── camera/
 │   ├── GameCamera.tsx           # OrbitControls + Z follow + respawn reset
+│   ├── useCameraDebugTracking.ts # Debug coord updates (change-gated)
 │   └── cameraDebugStore.ts      # Debug coord store
 ├── environment/
 │   ├── Lighting.tsx             # Scene lights (from config)
@@ -189,7 +193,8 @@ stateDiagram-v2
     ├── CameraControls.tsx       # Camera sliders
     ├── Slider.tsx               # Reusable slider
     ├── styles.ts                # Shared dev panel styles
-    └── useDevGravity.ts         # Runtime gravity sync`}</pre>
+    ├── useDevGravity.ts         # Runtime gravity sync
+    └── useDevDamping.ts         # Runtime damping sync`}</pre>
         </section>
 
         <section style={sectionStyle}>
@@ -240,6 +245,23 @@ stateDiagram-v2
               </div>
             ))}
           </div>
+        </section>
+
+        <section style={sectionStyle}>
+          <h2 style={h2Style}>Performance Pitfalls</h2>
+          <p style={descStyle}>
+            React Three Fiber apps must carefully manage when React reconciliation runs vs. when Three.js objects
+            are updated imperatively. Here are the rules this codebase follows:
+          </p>
+          <ul style={listStyle}>
+            <li><strong>useFrame reads via getState()</strong> — Never use Zustand selector hooks inside useFrame callbacks. Selectors create React subscriptions; multiplied across 40+ bricks, each state change triggers mass re-renders.</li>
+            <li><strong>Refs over useState for visuals</strong> — Collision-driven effects (hit glow color) use <code>useRef</code> instead of <code>useState</code>. Material properties are set imperatively by <code>useBrickLifecycle</code>, so Brick components never re-render after mount.</li>
+            <li><strong>Mutate position in-place</strong> — Player position is written 60x/sec but no React component subscribes to it. The array is mutated directly, bypassing <code>set()</code> entirely.</li>
+            <li><strong>Throttle store updates</strong> — <code>elapsedTime</code> only triggers <code>set()</code> when the displayed value (0.1s precision) changes. Camera debug coordinates only update when rounded values differ.</li>
+            <li><strong>Guard boolean setters</strong> — <code>setPlayerGrounded</code> and <code>setPlayerJumping</code> check the current value before calling <code>set()</code> to skip no-op updates.</li>
+            <li><strong>Static Canvas/Physics props</strong> — <code>Game.tsx</code> uses config constants (not store subscriptions) for initial camera FOV and physics gravity. Runtime changes are synced by child hooks (<code>useDevGravity</code>, <code>useDevDamping</code>, FOV sync in GameCamera).</li>
+            <li><strong>Share geometry</strong> — Identical geometries (shadow planes) are hoisted to module scope and shared across all instances. Per-instance materials only when opacity varies independently.</li>
+          </ul>
         </section>
 
         <section style={sectionStyle}>

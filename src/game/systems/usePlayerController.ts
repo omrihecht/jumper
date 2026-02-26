@@ -39,7 +39,7 @@ export function usePlayerController(
     const body = rigidBodyRef.current;
     if (!body) return;
 
-    const { phase, setPlayerPosition } = useGameStore.getState();
+    const { phase } = useGameStore.getState();
     if (phase !== 'playing') return;
 
     const { speed, sprintMultiplier } = useDevStore.getState().movement;
@@ -69,6 +69,9 @@ export function usePlayerController(
     );
 
     const pos = body.translation();
-    setPlayerPosition([pos.x, pos.y, pos.z]);
+    const p = useGameStore.getState().player.position;
+    p[0] = pos.x;
+    p[1] = pos.y;
+    p[2] = pos.z;
   });
 }

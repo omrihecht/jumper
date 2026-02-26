@@ -42,7 +42,6 @@ export function BrickSea() {
           x={b.x}
           z={b.z}
           size={level.brickSize}
-          color={level.brickColor}
           phaseOffset={b.phaseOffset}
         />
       ))}

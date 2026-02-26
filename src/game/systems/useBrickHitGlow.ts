@@ -1,5 +1,5 @@
-import { useRef, useState, useCallback } from 'react';
-import type { CollisionEnterPayload } from '@react-three/rapier';
+import { useRef, useCallback } from 'react';
+import type { MutableRefObject } from 'react';
 
 const HIT_COLORS = [
   '#ff00ff', '#00ffff', '#39ff14', '#ffff00',
@@ -14,21 +14,28 @@ function randomHitColor() {
 }
 
 /**
- * Manages the neon hit-glow effect when the player lands on a brick.
- * Returns the current hit color and collision handlers.
+ * Tracks collision contact state and stores the current hit color
+ * in a ref (no React state / no re-renders).
+ * The actual material update is handled imperatively by useBrickLifecycle.
  */
-export function useBrickHitGlow() {
-  const [hitColor, setHitColor] = useState<string | null>(null);
+export function useBrickHitGlow(): {
+  hitColorRef: MutableRefObject<string | null>;
+  onCollisionEnter: () => void;
+  onCollisionExit: () => void;
+} {
+  const hitColorRef = useRef<string | null>(null);
   const contactCount = useRef(0);
   const exitTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const onCollisionEnter = useCallback((_payload: CollisionEnterPayload) => {
+  const onCollisionEnter = useCallback(() => {
     contactCount.current++;
     if (exitTimer.current) {
       clearTimeout(exitTimer.current);
       exitTimer.current = null;
     }
-    setHitColor((prev) => prev ?? randomHitColor());
+    if (hitColorRef.current === null) {
+      hitColorRef.current = randomHitColor();
+    }
   }, []);
 
   const onCollisionExit = useCallback(() => {
@@ -36,12 +43,12 @@ export function useBrickHitGlow() {
     if (contactCount.current === 0) {
       exitTimer.current = setTimeout(() => {
         if (contactCount.current === 0) {
-          setHitColor(null);
+          hitColorRef.current = null;
         }
         exitTimer.current = null;
       }, DEBOUNCE_MS);
     }
   }, []);
 
-  return { hitColor, onCollisionEnter, onCollisionExit };
+  return { hitColorRef, onCollisionEnter, onCollisionExit };
 }
