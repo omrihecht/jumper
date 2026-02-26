@@ -17,6 +17,7 @@ const initialState: GameState = {
   elapsedTime: 0,
   currentLevel: DEFAULT_LEVEL,
   player: { ...initialPlayer },
+  resetCount: 0,
 };
 
 export const useGameStore = create<GameStore>((set) => ({
@@ -38,7 +39,11 @@ export const useGameStore = create<GameStore>((set) => ({
     set((s) => (s.phase === 'paused' ? { phase: 'playing' } : s)),
 
   winGame: () =>
-    set((s) => (s.phase === 'playing' ? { phase: 'won' } : s)),
+    set((s) =>
+      s.phase === 'playing'
+        ? { phase: 'won', lives: s.lives + 1 }
+        : s
+    ),
 
   loseGame: () =>
     set((s) => (s.phase === 'playing' ? { phase: 'lost' } : s)),
@@ -61,9 +66,8 @@ export const useGameStore = create<GameStore>((set) => ({
 
   loseLife: () =>
     set((s) => {
-      const lives = s.lives - 1;
-      if (lives <= 0) return { lives: 0, phase: 'lost' };
-      return { lives };
+      if (s.lives <= 0) return { phase: 'lost' };
+      return { lives: s.lives - 1 };
     }),
 
   tick: (delta) =>
@@ -74,7 +78,8 @@ export const useGameStore = create<GameStore>((set) => ({
     ),
 
   resetPlayer: () =>
-    set({
+    set((s) => ({
       player: { ...initialPlayer, position: [...PLAYER.startPosition] as Vec3 },
-    }),
+      resetCount: s.resetCount + 1,
+    })),
 }));

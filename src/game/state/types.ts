@@ -22,6 +22,8 @@ export interface GameState {
   elapsedTime: number;
   currentLevel: LevelConfig;
   player: PlayerState;
+  /** Increments on each player reset so systems can react. */
+  resetCount: number;
 }
 
 /** Actions exposed by the game store. */

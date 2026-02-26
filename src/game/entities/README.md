@@ -6,11 +6,12 @@ React components that render a single game object (mesh + rigid body).
 
 | File               | Description                                              |
 | ------------------ | -------------------------------------------------------- |
-| `Player.tsx`       | Player cube with physics body and collision detection    |
+| `Player.tsx`       | Player cube with physics body, respawn on resetCount     |
 | `Brick.tsx`        | Oscillating brick with hit glow and player shadow        |
 | `BrickSea.tsx`     | Grid manager that spawns Brick instances from level config |
-| `StartPlatform.tsx`| Fixed spawn platform                                    |
-| `EndPlatform.tsx`  | Goal platform — triggers win condition on collision      |
+| `StartPlatform.tsx`| Spawn platform with shadow and translucent styling       |
+| `EndPlatform.tsx`  | Goal platform — triggers win condition (+1 life)         |
+| `ShadowGroup.tsx`  | Reusable multi-layer shadow plane group                  |
 
 ## Adding an Entity
 

@@ -7,17 +7,18 @@ Zustand store managing all runtime game state, decoupled from rendering.
 | File           | Description                                        |
 | -------------- | -------------------------------------------------- |
 | `types.ts`     | TypeScript interfaces: `GamePhase`, `PlayerState`, `GameState`, `GameActions` |
-| `gameStore.ts` | Zustand store with phase transitions, player state, scoring |
+| `gameStore.ts` | Zustand store with phase transitions, lives, respawn, scoring |
 
 ## Game Phase State Machine
 
 ```
 [*] → Menu
-Menu → Playing (startGame)
+Menu → Playing (startGame — lives reset to 3)
 Playing → Paused (pauseGame)
 Paused → Playing (resumeGame)
-Playing → Won (winGame — triggered by EndPlatform collision)
-Playing → Lost (loseLife when lives reach 0)
+Playing → Won (winGame — triggered by EndPlatform collision, +1 life)
+Playing → Playing (loseLife when lives > 0 — respawn via resetCount)
+Playing → Lost (loseLife when lives = 0)
 Won / Lost → Menu (returnToMenu)
 ```
 

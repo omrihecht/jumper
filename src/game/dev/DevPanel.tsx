@@ -20,6 +20,9 @@ export function DevPanel() {
           <button onClick={resetAll} style={resetStyle}>
             Reset All
           </button>
+          <a href="/jumper/docs" style={docsLinkStyle}>
+            Docs
+          </a>
         </div>
       )}
     </div>
@@ -70,4 +73,14 @@ const resetStyle: CSSProperties = {
   fontFamily: 'monospace',
   fontWeight: 'bold',
   cursor: 'pointer',
+};
+
+const docsLinkStyle: CSSProperties = {
+  display: 'block',
+  marginTop: 8,
+  color: '#00e5ff',
+  fontSize: 12,
+  fontFamily: 'monospace',
+  textDecoration: 'none',
+  opacity: 0.7,
 };

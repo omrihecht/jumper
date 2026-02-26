@@ -11,6 +11,7 @@ import { useDevStore } from '../dev/devStore';
 export function Player() {
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const groundContactCount = useRef(0);
+  const lastResetCount = useRef(0);
 
   usePlayerController(rigidBodyRef);
   useJumpPhysics(rigidBodyRef);
@@ -18,6 +19,17 @@ export function Player() {
   useFrame(() => {
     const body = rigidBodyRef.current;
     if (!body) return;
+
+    const { resetCount } = useGameStore.getState();
+    if (resetCount !== lastResetCount.current) {
+      lastResetCount.current = resetCount;
+      const [sx, sy, sz] = PLAYER.startPosition;
+      body.setTranslation({ x: sx, y: sy, z: sz }, true);
+      body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+      body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+      groundContactCount.current = 0;
+    }
+
     const damping = useDevStore.getState().physics.playerLinearDamping;
     body.setLinearDamping(damping);
   });

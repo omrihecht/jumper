@@ -12,6 +12,7 @@ export function GameCamera() {
   const camera = useThree((s) => s.camera);
   const controlsRef = useRef<OrbitControlsImpl>(null);
   const lastPlayerZ = useRef(PLAYER.startPosition[2]);
+  const lastResetCount = useRef(0);
 
   useEffect(() => {
     camera.position.set(CAMERA.offset[0], CAMERA.offset[1], CAMERA.offset[2]);
@@ -21,6 +22,14 @@ export function GameCamera() {
   useFrame(() => {
     const controls = controlsRef.current;
     if (!controls) return;
+
+    const { resetCount } = useGameStore.getState();
+    if (resetCount !== lastResetCount.current) {
+      lastResetCount.current = resetCount;
+      camera.position.set(CAMERA.offset[0], CAMERA.offset[1], CAMERA.offset[2]);
+      controls.target.set(CAMERA.lookAt[0], CAMERA.lookAt[1], CAMERA.lookAt[2]);
+      lastPlayerZ.current = PLAYER.startPosition[2];
+    }
 
     const { fov } = useDevStore.getState().camera;
     if (Math.abs(camera.fov - fov) > 0.1) {

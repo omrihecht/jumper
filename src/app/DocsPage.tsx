@@ -117,14 +117,26 @@ flowchart TD
           <div className="mermaid" style={diagramStyle}>{`
 stateDiagram-v2
     [*] --> Menu
-    Menu --> Playing: Start Game
+    Menu --> Playing: Start Game (3 lives)
     Playing --> Paused: Pause
     Paused --> Playing: Resume
-    Playing --> Won: Reach End Platform
-    Playing --> Lost: Fall Off
+    Playing --> Won: Reach End Platform (+1 life)
+    Playing --> Playing: Fall (lives > 0, respawn)
+    Playing --> Lost: Fall (lives = 0)
     Won --> Menu: Play Again
     Lost --> Menu: Try Again
           `}</div>
+        </section>
+
+        <section style={sectionStyle}>
+          <h2 style={h2Style}>Lives & Respawn</h2>
+          <ul style={listStyle}>
+            <li>Player starts with <strong>3 lives</strong> (4 total attempts)</li>
+            <li>Falling below the death plane costs 1 life and triggers a respawn</li>
+            <li>Game over only when falling with <strong>0 lives</strong> remaining</li>
+            <li>Winning a level grants <strong>+1 life</strong></li>
+            <li>Respawn uses a <code>resetCount</code> signal — Player teleports rigid body to start, Camera snaps to initial view</li>
+          </ul>
         </section>
 
         <section style={sectionStyle}>
@@ -136,32 +148,34 @@ stateDiagram-v2
 │   ├── MenuScene.tsx            # Start screen
 │   └── GameOverScene.tsx        # Win/lose screen
 ├── entities/
-│   ├── Player.tsx               # Player mesh + rigid body
+│   ├── Player.tsx               # Player mesh + rigid body + respawn
 │   ├── Brick.tsx                # Oscillating brick (delegates to hooks)
 │   ├── BrickSea.tsx             # Grid manager
-│   ├── StartPlatform.tsx        # Spawn platform
-│   └── EndPlatform.tsx          # Goal platform (triggers win)
+│   ├── StartPlatform.tsx        # Spawn platform (shadow + translucent)
+│   ├── EndPlatform.tsx          # Goal platform (triggers win, +1 life)
+│   └── ShadowGroup.tsx          # Reusable multi-layer shadow plane
 ├── systems/
 │   ├── usePlayerController.ts   # Keyboard → velocity
 │   ├── useJumpPhysics.ts        # Jump + coyote time + input buffer
 │   ├── useWaveAnimation.ts      # Per-brick sine wave
 │   ├── useBrickShadow.ts        # Player proximity shadow on bricks
 │   ├── useBrickHitGlow.ts       # Neon glow on player contact
-│   ├── useCollisionDetection.ts # Death plane check
+│   ├── useCollisionDetection.ts # Death plane check (single-trigger guard)
 │   └── useGameLoop.ts           # Frame tick coordinator
 ├── state/
-│   ├── gameStore.ts             # Zustand store
-│   └── types.ts                 # TypeScript interfaces
+│   ├── gameStore.ts             # Zustand store (lives, respawn, scoring)
+│   └── types.ts                 # TypeScript interfaces (incl. resetCount)
 ├── config/
 │   ├── gameConfig.ts            # Physics, movement, camera, lighting
 │   ├── levelConfig.ts           # Level definitions
 │   └── controls.ts              # Key bindings
 ├── camera/
-│   ├── GameCamera.tsx           # OrbitControls + Z follow
+│   ├── GameCamera.tsx           # OrbitControls + Z follow + respawn reset
 │   └── cameraDebugStore.ts      # Debug coord store
 ├── environment/
 │   ├── Lighting.tsx             # Scene lights (from config)
-│   └── Sky.tsx                  # Background color (from config)
+│   ├── Sky.tsx                  # Background color (from config)
+│   └── Starfield.tsx            # 3D starfield (Points on sphere shell)
 ├── ui/
 │   ├── GameUI.tsx               # Phase-based UI router
 │   ├── MenuOverlay.tsx          # Start screen overlay

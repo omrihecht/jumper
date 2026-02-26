@@ -10,9 +10,9 @@ Called inside scene components or entities via `useFrame`.
 | `usePlayerController.ts`   | Keyboard input → player velocity                    |
 | `useJumpPhysics.ts`        | Jump with coyote time and input buffering           |
 | `useWaveAnimation.ts`      | Per-brick sine wave Y oscillation                   |
-| `useCollisionDetection.ts` | Death plane check — triggers life loss / game over  |
+| `useCollisionDetection.ts` | Death plane check with single-trigger guard          |
 | `useGameLoop.ts`           | Frame tick coordinator (calls collision + timer)    |
-| `useBrickShadow.ts`        | Player proximity shadow on bricks                   |
+| `useBrickShadow.ts`        | Player proximity shadow (configurable XZ threshold) |
 | `useBrickHitGlow.ts`       | Neon color glow when player lands on a brick        |
 
 ## Adding a System
