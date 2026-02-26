@@ -211,7 +211,8 @@ stateDiagram-v2
           <div style={gridStyle}>
             {[
               ['Background', '#1a1a1a', '#1a1a1a'],
-              ['Bricks', '#ff8c00', '#ff8c00'],
+              ['Bricks (base)', '#8a8a8a', '#8a8a8a'],
+              ['Bricks (hit)', 'random neon', '#ff00ff'],
               ['Player', '#00e5ff', '#00e5ff'],
               ['Start Platform', '#39ff14', '#39ff14'],
               ['End Platform', '#ff355e', '#ff355e'],
