@@ -3,15 +3,51 @@ import { useEffect } from 'react';
 
 declare global {
   interface Window {
-    mermaid?: { run: (opts?: { nodes?: NodeListOf<Element> }) => void };
+    mermaid?: {
+      initialize: (config: Record<string, unknown>) => void;
+      run: (opts?: { nodes?: NodeListOf<Element> }) => void;
+    };
   }
 }
+
+const MERMAID_CONFIG = {
+  startOnLoad: false,
+  theme: 'base',
+  themeVariables: {
+    primaryColor: '#0d2d3a',
+    primaryTextColor: '#e0e0e0',
+    primaryBorderColor: '#00e5ff',
+    lineColor: '#00e5ff88',
+    secondaryColor: '#1a0d2e',
+    tertiaryColor: '#0d0d0d',
+    background: '#161616',
+    mainBkg: '#0d2d3a',
+    nodeBorder: '#00e5ff',
+    clusterBkg: '#111111',
+    clusterBorder: '#2a2a2a',
+    titleColor: '#00e5ff',
+    edgeLabelBackground: '#0d0d0d',
+    textColor: '#e0e0e0',
+    labelTextColor: '#cccccc',
+    actorTextColor: '#e0e0e0',
+    actorBkg: '#0d2d3a',
+    actorBorder: '#00e5ff',
+    signalColor: '#00e5ff',
+    noteBkgColor: '#1a1a1a',
+    noteTextColor: '#e0e0e0',
+    noteBorderColor: '#333',
+    fontFamily: "'Inter', -apple-system, sans-serif",
+  },
+  flowchart: { curve: 'basis', padding: 20 },
+  stateDiagram: { padding: 60 },
+};
 
 export function DocsPage() {
   useEffect(() => {
     const script = document.createElement('script');
     script.src = 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js';
     script.onload = () => {
+      window.mermaid?.initialize(MERMAID_CONFIG);
       window.mermaid?.run();
     };
     document.body.appendChild(script);
@@ -67,14 +103,19 @@ export function DocsPage() {
 
         <section style={sectionStyle}>
           <h2 style={h2Style}>Data Flow</h2>
-          <div className="mermaid" style={diagramStyle}>{`
+          <p style={descStyle}>
+            How input propagates through systems, state, and rendering layers.
+            Dashed lines indicate reads via <code style={inlineCodeStyle}>getState()</code> (no React subscription).
+          </p>
+          <figure style={figureStyle}>
+            <div className="mermaid" style={diagramStyle}>{`
 flowchart TD
-    subgraph input [Input Layer]
-        Keyboard[Keyboard Events]
-        Touch[Touch Events]
+    subgraph input ["🎮 Input Layer"]
+        Keyboard["⌨️ Keyboard Events"]
+        Touch["👆 Touch Events"]
     end
 
-    subgraph systems [Systems - Custom Hooks]
+    subgraph systems ["⚙️ Systems — Custom Hooks"]
         PlayerCtrl[usePlayerController]
         JumpPhys[useJumpPhysics]
         PlayerReset[usePlayerReset]
@@ -84,11 +125,11 @@ flowchart TD
         GameLoop[useGameLoop]
     end
 
-    subgraph state [State - Zustand]
+    subgraph state ["💾 State — Zustand"]
         Store["gameStore"]
     end
 
-    subgraph rendering [Rendering - R3F Components]
+    subgraph rendering ["🖼️ Rendering — R3F"]
         Player[Player]
         BrickSea[BrickSea]
         Camera[GameCamera]
@@ -110,26 +151,97 @@ flowchart TD
     Store --> Player
     Store --> Camera
     Store --> UI
-          `}</div>
+            `}</div>
+            <figcaption style={captionStyle}>Input → Systems → State → Rendering pipeline</figcaption>
+          </figure>
         </section>
 
         <section style={sectionStyle}>
           <h2 style={h2Style}>Game State Machine</h2>
-          <div className="mermaid" style={diagramStyle}>{`
+          <p style={descStyle}>
+            Route transitions shown alongside state changes. The Zustand <code style={inlineCodeStyle}>phase</code> drives
+            in-game sub-states while React Router handles top-level screen navigation.
+          </p>
+          <figure style={figureStyle}>
+            <div className="mermaid" style={stateDiagramStyle}>{`
 stateDiagram-v2
     [*] --> Menu: /
     Menu --> Playing: Start Game → /play
     Playing --> Paused: Escape
     Paused --> Playing: Resume
     Paused --> Menu: Quit → /
-    Playing --> LevelUp: Reach End (not final level, +1 life)
+    Playing --> LevelUp: Reach End (not final, +1 life)
     LevelUp --> Playing: Auto-advance (2s)
-    Playing --> Won: Reach End (final level) → /you-win
+    Playing --> Won: Final level (+1 life) → /you-win
     Playing --> Playing: Fall (lives > 0, respawn)
     Playing --> Lost: Fall (lives = 0) → /game-over
     Won --> Menu: Play Again → /
     Lost --> Menu: Play Again → /
-          `}</div>
+            `}</div>
+            <figcaption style={captionStyle}>Phase transitions and their corresponding routes</figcaption>
+          </figure>
+        </section>
+
+        <section style={sectionStyle}>
+          <h2 style={h2Style}>State Management</h2>
+          <p style={descStyle}>
+            Game state is managed by a single Zustand store (<code style={inlineCodeStyle}>gameStore</code>).
+            Screen-level navigation is handled by React Router, while in-game sub-states
+            are driven by the store's <code style={inlineCodeStyle}>phase</code> field.
+          </p>
+
+          <h3 style={h3Style}>Store Shape</h3>
+          <table style={tableStyle}>
+            <thead>
+              <tr>
+                <th style={thStyle}>Field</th>
+                <th style={thStyle}>Type</th>
+                <th style={thStyle}>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['phase', "'idle' | 'playing' | 'paused' | 'level_up'", 'Current in-game phase'],
+                ['currentScreen', "'menu' | 'play' | 'game-over' | 'you-win'", 'Active 3D scene (drives SceneSwitch)'],
+                ['score', 'number', 'Accumulated points'],
+                ['lives', 'number', 'Remaining lives (starts at 3)'],
+                ['elapsedTime', 'number', 'Seconds since game start'],
+                ['levelIndex', 'number', 'Current level (0-based)'],
+                ['currentLevel', 'LevelConfig', 'Active level configuration'],
+                ['player', '{ position, isGrounded, isJumping }', 'Player runtime state'],
+                ['resetCount', 'number', 'Increments on respawn (signals systems)'],
+              ].map(([field, type, purpose]) => (
+                <tr key={field}>
+                  <td style={tdKeyStyle}>{field}</td>
+                  <td style={{ ...tdStyle, fontFamily: 'monospace', fontSize: 13 }}>{type}</td>
+                  <td style={tdStyle}>{purpose}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <h3 style={h3Style}>Dual Routing Strategy</h3>
+          <div style={gridStyle}>
+            {[
+              ['React Router', 'Top-level screens (menu, play, game-over, you-win). URL-driven, supports refresh and deep-linking.'],
+              ['Zustand phase', 'In-game sub-states (playing, paused, level_up). Drives HUD, pause menu, and level-up overlay within the /play route.'],
+              ['useScreenSync', 'Hook that syncs the mounted route to currentScreen on mount, so SceneSwitch renders the correct 3D scene after a page refresh.'],
+              ['navigateTo()', 'Imperative navigation for R3F hooks (e.g. collision handlers) that live outside the React Router tree.'],
+            ].map(([name, desc]) => (
+              <div key={name} style={cardStyle}>
+                <strong style={cardTitleStyle}>{name}</strong>
+                <span style={cardDescStyle}>{desc}</span>
+              </div>
+            ))}
+          </div>
+
+          <h3 style={h3Style}>Access Patterns</h3>
+          <ul style={listStyle}>
+            <li><strong>UI components</strong> — Use selector hooks (<code style={inlineCodeStyle}>useGameStore(s =&gt; s.score)</code>) to subscribe and re-render on change.</li>
+            <li><strong>useFrame loops</strong> — Use <code style={inlineCodeStyle}>useGameStore.getState()</code> to read without creating subscriptions (avoids 60fps re-renders across all bricks).</li>
+            <li><strong>Event handlers</strong> — Use <code style={inlineCodeStyle}>useGameStore.getState().actionName()</code> for fire-and-forget mutations (e.g. collision callbacks).</li>
+            <li><strong>Player position</strong> — Mutated in-place (never triggers <code style={inlineCodeStyle}>set()</code>) since no component subscribes to it.</li>
+          </ul>
         </section>
 
         <section style={sectionStyle}>
@@ -355,6 +467,13 @@ const h2Style: React.CSSProperties = {
   borderBottom: '1px solid #222',
 };
 
+const h3Style: React.CSSProperties = {
+  fontSize: 17,
+  fontWeight: 600,
+  color: '#b0bec5',
+  margin: '28px 0 12px',
+};
+
 const descStyle: React.CSSProperties = {
   fontSize: 16,
   lineHeight: 1.6,
@@ -394,13 +513,39 @@ const listStyle: React.CSSProperties = {
   fontSize: 15,
 };
 
+const figureStyle: React.CSSProperties = {
+  margin: '16px 0 0',
+};
+
+const captionStyle: React.CSSProperties = {
+  marginTop: 10,
+  fontSize: 12,
+  color: '#666',
+  fontStyle: 'italic',
+  textAlign: 'center',
+};
+
+const inlineCodeStyle: React.CSSProperties = {
+  background: '#1e1e1e',
+  padding: '2px 6px',
+  borderRadius: 4,
+  fontSize: '0.9em',
+  color: '#00e5ff',
+  fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
+};
+
 const diagramStyle: React.CSSProperties = {
-  background: '#161616',
-  border: '1px solid #2a2a2a',
-  borderRadius: 8,
-  padding: 24,
+  background: 'linear-gradient(145deg, #111111, #161616)',
+  border: '1px solid #1e3a4a',
+  borderRadius: 12,
+  padding: '32px 24px',
   textAlign: 'center',
   overflow: 'auto',
+  boxShadow: '0 0 20px rgba(0,229,255,0.05), inset 0 1px 0 rgba(255,255,255,0.03)',
+};
+
+const stateDiagramStyle: React.CSSProperties = {
+  ...diagramStyle,
 };
 
 const codeStyle: React.CSSProperties = {
