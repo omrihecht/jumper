@@ -16,7 +16,7 @@ export function DocsPage() {
     };
     document.body.appendChild(script);
     return () => {
-      document.body.removeChild(script);
+      script.parentNode?.removeChild(script);
     };
   }, []);
 
@@ -117,15 +117,18 @@ flowchart TD
           <h2 style={h2Style}>Game State Machine</h2>
           <div className="mermaid" style={diagramStyle}>{`
 stateDiagram-v2
-    [*] --> Menu
-    Menu --> Playing: Start Game (3 lives)
-    Playing --> Paused: Pause
+    [*] --> Menu: /
+    Menu --> Playing: Start Game → /play
+    Playing --> Paused: Escape
     Paused --> Playing: Resume
-    Playing --> Won: Reach End Platform (+1 life)
+    Paused --> Menu: Quit → /
+    Playing --> LevelUp: Reach End (not final level, +1 life)
+    LevelUp --> Playing: Auto-advance (2s)
+    Playing --> Won: Reach End (final level) → /you-win
     Playing --> Playing: Fall (lives > 0, respawn)
-    Playing --> Lost: Fall (lives = 0)
-    Won --> Menu: Play Again
-    Lost --> Menu: Try Again
+    Playing --> Lost: Fall (lives = 0) → /game-over
+    Won --> Menu: Play Again → /
+    Lost --> Menu: Play Again → /
           `}</div>
         </section>
 
@@ -143,18 +146,27 @@ stateDiagram-v2
         <section style={sectionStyle}>
           <h2 style={h2Style}>Directory Structure</h2>
           <pre style={codeStyle}>{`src/game/
-├── Game.tsx                     # R3F Canvas + Physics wrapper
+├── GameLayout.tsx               # Shared Canvas + Physics layout (all routes)
+├── navigation.ts                # Imperative navigate for R3F hooks
+├── screens/
+│   ├── MenuScreen.tsx           # Start screen overlay
+│   ├── PlayScreen.tsx           # Gameplay UI (HUD, pause, level-up)
+│   ├── GameOverScreen.tsx       # Game over overlay
+│   └── YouWinScreen.tsx         # Victory overlay
 ├── scenes/
+│   ├── SceneSwitch.tsx          # Renders scene by currentScreen
 │   ├── GameScene.tsx            # Gameplay scene graph
-│   ├── MenuScene.tsx            # Start screen
-│   └── GameOverScene.tsx        # Win/lose screen
+│   ├── MenuScene.tsx            # Start screen backdrop
+│   ├── GameOverScene.tsx        # Lose screen backdrop
+│   └── YouWinScene.tsx          # Win screen backdrop + confetti
 ├── entities/
 │   ├── Player.tsx               # Player cube (delegates to 4 hooks)
-│   ├── Brick.tsx                # Brick — no re-renders after mount
+│   ├── Brick.tsx                # Brick — React.memo, no re-renders after mount
 │   ├── BrickSea.tsx             # Grid manager
 │   ├── StartPlatform.tsx        # Spawn platform (shadow + translucent)
-│   ├── EndPlatform.tsx          # Goal platform (triggers win, +1 life)
-│   └── ShadowGroup.tsx          # Shared-geometry shadow planes
+│   ├── EndPlatform.tsx          # Goal platform (triggers win/level-up)
+│   ├── ShadowGroup.tsx          # Shared-geometry shadow planes
+│   └── platformMaterials.ts     # Shared platform edge material
 ├── systems/
 │   ├── usePlayerController.ts   # Keyboard → velocity (mutates pos in-place)
 │   ├── useJumpPhysics.ts        # Jump + coyote time + input buffer
@@ -166,26 +178,29 @@ stateDiagram-v2
 │   ├── useCollisionDetection.ts # Death plane check (single-trigger guard)
 │   └── useGameLoop.ts           # Frame tick coordinator
 ├── state/
-│   ├── gameStore.ts             # Zustand store (lives, respawn, scoring)
-│   └── types.ts                 # TypeScript interfaces (incl. resetCount)
+│   ├── gameStore.ts             # Zustand store (lives, respawn, phase)
+│   ├── types.ts                 # TypeScript interfaces
+│   └── useScreenSync.ts         # Route → currentScreen sync hook
 ├── config/
 │   ├── gameConfig.ts            # Physics, movement, camera, lighting
-│   ├── levelConfig.ts           # Level definitions
+│   ├── levelConfig.ts           # Level definitions (3 levels)
 │   └── controls.ts              # Key bindings
 ├── camera/
+│   ├── AutoPanCamera.tsx        # Orbiting camera for non-gameplay screens
 │   ├── GameCamera.tsx           # OrbitControls + Z follow + respawn reset
 │   ├── useCameraDebugTracking.ts # Debug coord updates (change-gated)
 │   └── cameraDebugStore.ts      # Debug coord store
 ├── environment/
 │   ├── Lighting.tsx             # Scene lights (from config)
 │   ├── Sky.tsx                  # Background color (from config)
-│   └── Starfield.tsx            # 3D starfield (Points on sphere shell)
+│   ├── Starfield.tsx            # 3D starfield (Points on sphere shell)
+│   ├── Confetti.tsx             # Falling confetti particles (win screen)
+│   └── LevelTitle.tsx           # 3D floating level name
 ├── ui/
-│   ├── GameUI.tsx               # Phase-based UI router
-│   ├── MenuOverlay.tsx          # Start screen overlay
-│   ├── GameOverOverlay.tsx      # Win/lose overlay
 │   ├── HUD.tsx                  # Score, lives, timer
-│   └── PauseMenu.tsx            # Pause overlay
+│   ├── PauseMenu.tsx            # Pause overlay
+│   ├── LevelUpOverlay.tsx       # Level-up transition (2s auto-advance)
+│   └── styles.ts                # Shared overlay/button styles
 └── dev/
     ├── devStore.ts              # Runtime config store
     ├── DevPanel.tsx             # Collapsible debug panel
@@ -237,11 +252,11 @@ stateDiagram-v2
               ['End Platform', '#ff355e', '#ff355e'],
             ].map(([label, color, bg]) => (
               <div key={label} style={{ ...cardStyle, borderLeft: `4px solid ${bg}` }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 20, height: 20, borderRadius: 4, background: bg, boxShadow: `0 0 8px ${bg}` }} />
+                <div style={colorSwatchRowStyle}>
+                  <div style={{ ...colorSwatchStyle, background: bg, boxShadow: `0 0 8px ${bg}` }} />
                   <strong style={cardTitleStyle}>{label}</strong>
                 </div>
-                <code style={{ color: '#888', fontSize: 13 }}>{color}</code>
+                <code style={colorCodeStyle}>{color}</code>
               </div>
             ))}
           </div>
@@ -259,7 +274,7 @@ stateDiagram-v2
             <li><strong>Mutate position in-place</strong> — Player position is written 60x/sec but no React component subscribes to it. The array is mutated directly, bypassing <code>set()</code> entirely.</li>
             <li><strong>Throttle store updates</strong> — <code>elapsedTime</code> only triggers <code>set()</code> when the displayed value (0.1s precision) changes. Camera debug coordinates only update when rounded values differ.</li>
             <li><strong>Guard boolean setters</strong> — <code>setPlayerGrounded</code> and <code>setPlayerJumping</code> check the current value before calling <code>set()</code> to skip no-op updates.</li>
-            <li><strong>Static Canvas/Physics props</strong> — <code>Game.tsx</code> uses config constants (not store subscriptions) for initial camera FOV and physics gravity. Runtime changes are synced by child hooks (<code>useDevGravity</code>, <code>useDevDamping</code>, FOV sync in GameCamera).</li>
+            <li><strong>Static Canvas/Physics props</strong> — <code>GameLayout.tsx</code> uses config constants (not store subscriptions) for initial camera FOV and physics gravity. Runtime changes are synced by child hooks (<code>useDevGravity</code>, <code>useDevDamping</code>, FOV sync in GameCamera).</li>
             <li><strong>Share geometry</strong> — Identical geometries (shadow planes) are hoisted to module scope and shared across all instances. Per-instance materials only when opacity varies independently.</li>
           </ul>
         </section>
@@ -431,4 +446,21 @@ const tdStyle: React.CSSProperties = {
   borderBottom: '1px solid #1e1e1e',
   color: '#aaa',
   fontSize: 14,
+};
+
+const colorSwatchRowStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: 10,
+};
+
+const colorSwatchStyle: React.CSSProperties = {
+  width: 20,
+  height: 20,
+  borderRadius: 4,
+};
+
+const colorCodeStyle: React.CSSProperties = {
+  color: '#888',
+  fontSize: 13,
 };

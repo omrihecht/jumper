@@ -6,6 +6,7 @@ import { GameCamera } from '../camera/GameCamera';
 import { Lighting } from '../environment/Lighting';
 import { Sky } from '../environment/Sky';
 import { Starfield } from '../environment/Starfield';
+import { LevelTitle } from '../environment/LevelTitle';
 import { useGameLoop } from '../systems/useGameLoop';
 import { useDevGravity } from '../dev/useDevGravity';
 
@@ -18,6 +19,7 @@ export function GameScene() {
       <Lighting />
       <Sky />
       <Starfield />
+      <LevelTitle />
       <GameCamera />
       <StartPlatform />
       <BrickSea />

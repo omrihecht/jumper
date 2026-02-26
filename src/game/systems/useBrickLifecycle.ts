@@ -1,4 +1,4 @@
-import type { MutableRefObject } from 'react';
+import type { MutableRefObject, RefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import type { RapierRigidBody } from '@react-three/rapier';
 import { Color } from 'three';
@@ -25,8 +25,8 @@ const _color = new Color();
  * the body position.
  */
 export function useBrickLifecycle(
-  rigidBodyRef: React.RefObject<RapierRigidBody | null>,
-  meshGroupRef: React.RefObject<Group | null>,
+  rigidBodyRef: RefObject<RapierRigidBody | null>,
+  meshGroupRef: RefObject<Group | null>,
   hitColorRef: MutableRefObject<string | null>,
   phaseOffset: number,
   brickHeight: number,

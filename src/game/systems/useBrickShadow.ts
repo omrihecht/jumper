@@ -1,9 +1,9 @@
 import { useRef } from 'react';
+import type { RefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import type { RapierRigidBody } from '@react-three/rapier';
+import type { Group, Mesh, MeshBasicMaterial } from 'three';
 import { useGameStore } from '../state/gameStore';
-import type { Group, Mesh } from 'three';
-import type { MeshBasicMaterial } from 'three';
 
 const SHADOW_MAX_HEIGHT = 10;
 const DEFAULT_XZ_THRESHOLD = 1.2;
@@ -16,7 +16,7 @@ export const SHADOW_LAYER_COUNT = 3;
  * based on the player's proximity above it.
  */
 export function useBrickShadow(
-  rigidBodyRef: React.RefObject<RapierRigidBody | null>,
+  rigidBodyRef: RefObject<RapierRigidBody | null>,
   xzThreshold = DEFAULT_XZ_THRESHOLD,
 ) {
   const shadowGroupRef = useRef<Group>(null);

@@ -1,13 +1,12 @@
 import { useRef, useMemo } from 'react';
 import { RigidBody } from '@react-three/rapier';
 import type { RapierRigidBody } from '@react-three/rapier';
-import { BoxGeometry, EdgesGeometry, LineBasicMaterial, Color } from 'three';
-import { PLATFORM } from '../config/gameConfig';
+import { BoxGeometry, EdgesGeometry, Color } from 'three';
+import { PLATFORM, PLATFORM_XZ_THRESHOLD } from '../config/gameConfig';
+import { PLATFORM_EDGE_MAT } from './platformMaterials';
 import { useBrickShadow } from '../systems/useBrickShadow';
 import { ShadowGroup } from './ShadowGroup';
 
-const EDGE_MAT = new LineBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.3 });
-const PLATFORM_XZ_THRESHOLD = 2.5;
 const EMISSIVE = new Color(PLATFORM.startColor);
 
 /**
@@ -42,7 +41,7 @@ export function StartPlatform() {
           toneMapped={false}
         />
       </mesh>
-      <lineSegments geometry={edgesGeo} material={EDGE_MAT} />
+      <lineSegments geometry={edgesGeo} material={PLATFORM_EDGE_MAT} />
       <ShadowGroup ref={shadowGroupRef} yOffset={halfH} />
     </RigidBody>
   );

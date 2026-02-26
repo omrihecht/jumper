@@ -31,6 +31,11 @@ const valueStyle: CSSProperties = {
   flexShrink: 0,
 };
 
+const inputStyle: CSSProperties = {
+  flex: 1,
+  accentColor: '#00e5ff',
+};
+
 export function Slider({ label, value, min, max, step, onChange }: SliderProps) {
   return (
     <div style={rowStyle}>
@@ -42,7 +47,7 @@ export function Slider({ label, value, min, max, step, onChange }: SliderProps) 
         step={step}
         value={value}
         onChange={(e) => onChange(parseFloat(e.target.value))}
-        style={{ flex: 1, accentColor: '#00e5ff' }}
+        style={inputStyle}
       />
       <span style={valueStyle}>{value.toFixed(step < 1 ? 2 : 0)}</span>
     </div>

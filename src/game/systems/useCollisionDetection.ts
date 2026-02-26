@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { DEATH_PLANE_Y } from '../config/gameConfig';
 import { useGameStore } from '../state/gameStore';
+import { navigateTo } from '../navigation';
 
 /**
  * Checks each frame whether the player has fallen
@@ -19,7 +20,12 @@ export function useCollisionDetection() {
       if (!hasFallen.current) {
         hasFallen.current = true;
         loseLife();
-        resetPlayer();
+
+        if (useGameStore.getState().phase === 'idle') {
+          navigateTo('/game-over');
+        } else {
+          resetPlayer();
+        }
       }
     } else {
       hasFallen.current = false;

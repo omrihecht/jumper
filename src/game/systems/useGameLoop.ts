@@ -15,7 +15,5 @@ export function useGameLoop() {
     if (phase !== 'playing') return;
 
     tick(delta);
-
-    // TODO: Add any cross-system coordination logic here
   });
 }

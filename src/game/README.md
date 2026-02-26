@@ -4,25 +4,47 @@ Root module for the Jumper 3D platformer.
 
 ## Structure
 
-| Directory     | Role                                                    |
-| ------------- | ------------------------------------------------------- |
-| `config/`     | Static tunable parameters (physics, levels, controls)   |
-| `state/`      | Zustand store and TypeScript interfaces                 |
-| `entities/`   | React components rendering a single game object         |
-| `systems/`    | Custom hooks encapsulating one slice of game logic      |
-| `camera/`     | Camera controller, debug tracking, and coordinate store |
-| `environment/`| Lighting, sky, and starfield background                 |
-| `scenes/`     | Scene components that compose entities and systems      |
-| `ui/`         | HTML overlays rendered outside the Canvas               |
-| `dev/`        | Developer debug panel and runtime parameter hooks       |
+| Directory      | Role                                                    |
+| -------------- | ------------------------------------------------------- |
+| `config/`      | Static tunable parameters (physics, levels, controls)   |
+| `state/`       | Zustand store, TypeScript interfaces, screen sync hook  |
+| `entities/`    | React components rendering a single game object         |
+| `systems/`     | Custom hooks encapsulating one slice of game logic      |
+| `camera/`      | Camera controller, auto-pan, debug tracking             |
+| `environment/` | Lighting, sky, starfield, confetti, level title          |
+| `scenes/`      | 3D scene components (menu, gameplay, game-over, you-win)|
+| `screens/`     | Route-level UI overlays rendered via React Router        |
+| `ui/`          | HTML overlays rendered outside the Canvas               |
+| `dev/`         | Developer debug panel and runtime parameter hooks       |
 
 ## Entry Point
 
-`Game.tsx` mounts the R3F `<Canvas>`, wraps everything in `<Physics>`,
-and switches between scenes (`MenuScene`, `GameScene`, `GameOverScene`)
-based on the current game phase. It uses static config values for
-initial camera/physics props — runtime changes are handled
-imperatively by child hooks to avoid full Canvas re-renders.
+`GameLayout.tsx` mounts the R3F `<Canvas>`, wraps everything in `<Physics>`,
+and renders `<SceneSwitch>` which picks the correct 3D scene based on
+`currentScreen` from the Zustand store. The layout uses `<Outlet>` so
+each route's screen component (MenuScreen, PlayScreen, etc.) renders
+its HTML overlay on top.
+
+The single shared Canvas ensures the WebGL context is never destroyed
+during route transitions.
+
+## Routing
+
+Top-level screens are managed by React Router (not Zustand phase):
+
+| Route        | Screen Component | 3D Scene      |
+| ------------ | ---------------- | ------------- |
+| `/`          | MenuScreen       | MenuScene     |
+| `/play`      | PlayScreen       | GameScene     |
+| `/game-over` | GameOverScreen   | GameOverScene |
+| `/you-win`   | YouWinScreen     | YouWinScene   |
+
+The `useScreenSync` hook ensures the Zustand `currentScreen` stays
+in sync with the mounted route — critical for correct scene rendering
+on page refresh.
+
+`navigation.ts` exposes `navigateTo()` for imperative navigation
+from R3F hooks (which live outside the React Router tree).
 
 ## Data Flow
 
@@ -59,12 +81,6 @@ Each brick cycles through a sine-curve Y-scale over a configurable
 duration, then vanishes for a pause before repeating. When vanished,
 the rigid body is teleported far below the scene so the player falls
 through. Opacity fades to zero as the brick approaches disappearance.
-
-## Performance Principles
-
-See the dedicated **Performance** section below for pitfalls and rules.
-
----
 
 ## Performance: Pitfalls & Rules
 
@@ -125,10 +141,10 @@ Per-instance materials are only needed when per-instance properties
 
 ### 6. Don't subscribe to stores at the Canvas/Physics level
 
-Zustand selectors in `Game.tsx` cause the entire R3F tree
+Zustand selectors in `GameLayout.tsx` cause the entire R3F tree
 (Canvas → Physics → all scenes) to re-mount when the value changes.
 
-**Rule**: `Game.tsx` should only subscribe to `phase` for scene switching.
+**Rule**: `GameLayout.tsx` should use static config constants.
 All other runtime parameter syncing should happen imperatively in child
 hooks (`useDevGravity`, `useDevDamping`, `GameCamera` FOV sync).
 
@@ -144,3 +160,9 @@ setPlayerGrounded: (isGrounded) => {
   set((s) => ({ player: { ...s.player, isGrounded } }));
 },
 ```
+
+### 8. Memoize list-rendered components
+
+Components rendered in a loop (e.g., `Brick` inside `BrickSea`) should
+be wrapped in `React.memo` so parent re-renders (level transitions)
+don't reconcile unchanged children.

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { PLAYER } from '../config/gameConfig';
-import { DEFAULT_LEVEL } from '../config/levelConfig';
+import { DEFAULT_LEVEL, LEVELS } from '../config/levelConfig';
 import type { GameState, GameStore, PlayerState, Vec3 } from './types';
 
 const initialPlayer: PlayerState = {
@@ -10,10 +10,12 @@ const initialPlayer: PlayerState = {
 };
 
 const initialState: GameState = {
-  phase: 'menu',
+  phase: 'idle',
+  currentScreen: 'menu',
   score: 0,
   lives: 3,
   elapsedTime: 0,
+  levelIndex: 0,
   currentLevel: DEFAULT_LEVEL,
   player: { ...initialPlayer },
   resetCount: 0,
@@ -22,12 +24,17 @@ const initialState: GameState = {
 export const useGameStore = create<GameStore>((set) => ({
   ...initialState,
 
+  setScreen: (currentScreen) => set({ currentScreen }),
+
   startGame: () =>
     set({
       phase: 'playing',
+      currentScreen: 'play',
       score: 0,
       lives: 3,
       elapsedTime: 0,
+      levelIndex: 0,
+      currentLevel: LEVELS[0],
       player: { ...initialPlayer, position: [...PLAYER.startPosition] as Vec3 },
     }),
 
@@ -38,16 +45,29 @@ export const useGameStore = create<GameStore>((set) => ({
     set((s) => (s.phase === 'paused' ? { phase: 'playing' } : s)),
 
   winGame: () =>
-    set((s) =>
-      s.phase === 'playing'
-        ? { phase: 'won', lives: s.lives + 1 }
-        : s
-    ),
+    set((s) => {
+      if (s.phase !== 'playing') return s;
+      const isLastLevel = s.levelIndex >= LEVELS.length - 1;
+      return isLastLevel
+        ? { phase: 'idle', currentScreen: 'you-win', lives: s.lives + 1 }
+        : { phase: 'level_up', lives: s.lives + 1 };
+    }),
 
-  loseGame: () =>
-    set((s) => (s.phase === 'playing' ? { phase: 'lost' } : s)),
+  advanceLevel: () =>
+    set((s) => {
+      if (s.phase !== 'level_up') return s;
+      const nextIndex = s.levelIndex + 1;
+      return {
+        phase: 'playing',
+        levelIndex: nextIndex,
+        currentLevel: LEVELS[nextIndex],
+        player: { ...initialPlayer, position: [...PLAYER.startPosition] as Vec3 },
+        resetCount: s.resetCount + 1,
+      };
+    }),
 
-  returnToMenu: () => set({ ...initialState, player: { ...initialPlayer } }),
+  returnToMenu: () =>
+    set({ ...initialState, player: { ...initialPlayer } }),
 
   setPlayerGrounded: (isGrounded) => {
     if (useGameStore.getState().player.isGrounded === isGrounded) return;
@@ -59,11 +79,9 @@ export const useGameStore = create<GameStore>((set) => ({
     set((s) => ({ player: { ...s.player, isJumping } }));
   },
 
-  addScore: (points) => set((s) => ({ score: s.score + points })),
-
   loseLife: () =>
     set((s) => {
-      if (s.lives <= 0) return { phase: 'lost' };
+      if (s.lives <= 0) return { phase: 'idle', currentScreen: 'game-over' };
       return { lives: s.lives - 1 };
     }),
 

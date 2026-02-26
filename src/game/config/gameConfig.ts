@@ -23,8 +23,6 @@ export const JUMP = {
 export const CAMERA = {
   offset: [-0.4, 8, 12.8] as readonly [number, number, number],
   lookAt: [0, 0, -25] as readonly [number, number, number],
-  lookAheadDistance: 2,
-  smoothSpeed: 5,
   fov: 60,
   near: 0.1,
   far: 1000,
@@ -68,3 +66,5 @@ export const BRICK_LIFECYCLE = {
 } as const;
 
 export const DEATH_PLANE_Y = -20;
+
+export const PLATFORM_XZ_THRESHOLD = 2.5;

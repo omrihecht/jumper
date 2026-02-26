@@ -1,23 +1,7 @@
-import { useFrame } from '@react-three/fiber';
+import { AutoPanCamera } from '../camera/AutoPanCamera';
 import { Lighting } from '../environment/Lighting';
 import { Sky } from '../environment/Sky';
 import { Starfield } from '../environment/Starfield';
-
-const PAN_RADIUS = 30;
-const PAN_SPEED = 0.08;
-const PAN_HEIGHT = 12;
-
-function AutoPanCamera() {
-  useFrame(({ camera, clock }) => {
-    const t = clock.getElapsedTime() * PAN_SPEED;
-    camera.position.x = Math.sin(t) * PAN_RADIUS;
-    camera.position.y = PAN_HEIGHT + Math.sin(t * 0.7) * 4;
-    camera.position.z = Math.cos(t) * PAN_RADIUS;
-    camera.lookAt(0, 0, 0);
-  });
-
-  return null;
-}
 
 /**
  * Title / start screen scene.
@@ -27,7 +11,7 @@ function AutoPanCamera() {
 export function MenuScene() {
   return (
     <>
-      <AutoPanCamera />
+      <AutoPanCamera radius={30} speed={0.08} height={12} verticalAmplitude={4} verticalFrequency={0.7} />
       <Lighting />
       <Sky />
       <Starfield />

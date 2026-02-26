@@ -1,4 +1,4 @@
-import { useRef, useMemo } from 'react';
+import { memo, useRef, useMemo } from 'react';
 import { RigidBody } from '@react-three/rapier';
 import type { RapierRigidBody } from '@react-three/rapier';
 import { EdgesGeometry, BoxGeometry, LineBasicMaterial } from 'three';
@@ -9,7 +9,7 @@ import { useBrickHitGlow } from '../systems/useBrickHitGlow';
 import { useBrickLifecycle } from '../systems/useBrickLifecycle';
 import { ShadowGroup } from './ShadowGroup';
 
-export interface BrickProps {
+interface BrickProps {
   x: number;
   z: number;
   size: readonly [number, number, number];
@@ -17,11 +17,14 @@ export interface BrickProps {
 }
 
 /**
- * Single oscillating brick. All dynamic material properties
- * (color, emissive, opacity) are managed imperatively by
- * useBrickLifecycle — this component never re-renders on collision.
+ * Single oscillating brick. Wrapped in React.memo so BrickSea
+ * level transitions don't re-render surviving instances.
+ *
+ * All dynamic material properties (color, emissive, opacity) are
+ * managed imperatively by useBrickLifecycle — this component
+ * never re-renders on collision.
  */
-export function Brick({ x, z, size, phaseOffset }: BrickProps) {
+export const Brick = memo(function Brick({ x, z, size, phaseOffset }: BrickProps) {
   const rigidBodyRef = useRef<RapierRigidBody>(null);
   const meshGroupRef = useRef<Group>(null);
 
@@ -66,4 +69,4 @@ export function Brick({ x, z, size, phaseOffset }: BrickProps) {
       </group>
     </RigidBody>
   );
-}
+});
