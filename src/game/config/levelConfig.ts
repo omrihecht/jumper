@@ -32,12 +32,12 @@ export const LEVELS: LevelConfig[] = [
     gridCols: 5,
     gridRows: 8,
     brickSpacing: 2.5,
-    brickSize: [1.8, 0.4, 1.8],
+    brickSize: [1.8, 1, 1.8],
     brickColor: '#ff8c00',
     waveAmplitude: 1.2,
     waveFrequency: 1.5,
     wavePhaseScale: 0.6,
-    startGap: 6,
+    startGap: 3,
     endGap: 6,
   },
   {
@@ -51,7 +51,7 @@ export const LEVELS: LevelConfig[] = [
     waveAmplitude: 2.0,
     waveFrequency: 2.0,
     wavePhaseScale: 0.8,
-    startGap: 4,
+    startGap: 3,
     endGap: 4,
   },
   {
@@ -65,7 +65,7 @@ export const LEVELS: LevelConfig[] = [
     waveAmplitude: 3.0,
     waveFrequency: 2.5,
     wavePhaseScale: 1.0,
-    startGap: 5,
+    startGap: 3,
     endGap: 5,
   },
 ];

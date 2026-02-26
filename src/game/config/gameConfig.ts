@@ -60,4 +60,11 @@ export const ENVIRONMENT = {
   backgroundColor: '#1a1a1a',
 } as const;
 
+export const BRICK_LIFECYCLE = {
+  visibleDuration: 8,
+  vanishDuration: 1.5,
+  disableThreshold: 0.08,
+  fadeThreshold: 0.3,
+} as const;
+
 export const DEATH_PLANE_Y = -20;
