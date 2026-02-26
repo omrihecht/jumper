@@ -29,8 +29,8 @@ export const LEVELS: LevelConfig[] = [
   {
     id: 'level-1',
     name: 'Calm Seas',
-    gridCols: 35,
-    gridRows: 30,
+    gridCols: 5,
+    gridRows: 8,
     brickSpacing: 2.5,
     brickSize: [1.8, 0.4, 1.8],
     brickColor: '#ff8c00',

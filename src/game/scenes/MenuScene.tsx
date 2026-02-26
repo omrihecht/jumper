@@ -1,5 +1,6 @@
 import { Lighting } from '../environment/Lighting';
 import { Sky } from '../environment/Sky';
+import { Starfield } from '../environment/Starfield';
 
 /**
  * Title / start screen scene.
@@ -10,7 +11,7 @@ export function MenuScene() {
     <>
       <Lighting />
       <Sky />
-      {/* TODO: Add decorative elements or animated preview */}
+      <Starfield />
     </>
   );
 }

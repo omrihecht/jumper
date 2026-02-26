@@ -6,17 +6,18 @@ import type { Group, Mesh } from 'three';
 import type { MeshBasicMaterial } from 'three';
 
 const SHADOW_MAX_HEIGHT = 10;
-const SHADOW_XZ_THRESHOLD = 1.2;
+const DEFAULT_XZ_THRESHOLD = 1.2;
 const SHADOW_BASE_SIZE = 0.6;
 const SHADOW_BLUR_SCALE = 1.8;
 export const SHADOW_LAYER_COUNT = 3;
 
 /**
- * Manages a multi-layer shadow group projected onto a brick surface
- * based on the player's proximity above the brick.
+ * Manages a multi-layer shadow group projected onto a surface
+ * based on the player's proximity above it.
  */
 export function useBrickShadow(
   rigidBodyRef: React.RefObject<RapierRigidBody | null>,
+  xzThreshold = DEFAULT_XZ_THRESHOLD,
 ) {
   const shadowGroupRef = useRef<Group>(null);
 
@@ -32,7 +33,7 @@ export function useBrickShadow(
     const dz = Math.abs(pz - brickPos.z);
     const dy = py - brickPos.y;
 
-    const directlyBelow = dx < SHADOW_XZ_THRESHOLD && dz < SHADOW_XZ_THRESHOLD && dy > 0;
+    const directlyBelow = dx < xzThreshold && dz < xzThreshold && dy > 0;
     const t = directlyBelow ? Math.max(0, 1 - dy / SHADOW_MAX_HEIGHT) : 0;
     group.visible = t > 0.01;
 

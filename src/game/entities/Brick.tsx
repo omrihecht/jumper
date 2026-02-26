@@ -1,10 +1,11 @@
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { RigidBody } from '@react-three/rapier';
 import type { RapierRigidBody } from '@react-three/rapier';
 import { Color, EdgesGeometry, BoxGeometry, LineBasicMaterial } from 'three';
 import { useWaveAnimation } from '../systems/useWaveAnimation';
-import { useBrickShadow, SHADOW_LAYER_COUNT } from '../systems/useBrickShadow';
+import { useBrickShadow } from '../systems/useBrickShadow';
 import { useBrickHitGlow } from '../systems/useBrickHitGlow';
+import { ShadowGroup } from './ShadowGroup';
 
 export interface BrickProps {
   x: number;
@@ -17,7 +18,8 @@ export interface BrickProps {
 const BASE_COLOR = '#8a8a8a';
 const BASE_OPACITY = 0.35;
 const HIT_OPACITY = 0.55;
-const EDGE_COLOR = new LineBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.4 });
+const EDGE_MAT = new LineBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.4 });
+const BASE_EMISSIVE = new Color(BASE_COLOR).multiplyScalar(0.05);
 
 /**
  * Single oscillating brick with translucent plastic look,
@@ -30,11 +32,15 @@ export function Brick({ x, z, size, phaseOffset }: BrickProps) {
   const shadowGroupRef = useBrickShadow(rigidBodyRef);
   const { hitColor, onCollisionEnter, onCollisionExit } = useBrickHitGlow();
 
+  const edgesGeo = useMemo(() => {
+    const box = new BoxGeometry(...size);
+    const edges = new EdgesGeometry(box);
+    box.dispose();
+    return edges;
+  }, [size]);
+
   const isHit = hitColor !== null;
   const halfH = size[1] / 2 + 0.01;
-
-  const boxGeo = new BoxGeometry(...size);
-  const edgesGeo = new EdgesGeometry(boxGeo);
 
   return (
     <RigidBody
@@ -55,25 +61,13 @@ export function Brick({ x, z, size, phaseOffset }: BrickProps) {
           metalness={0.05}
           clearcoat={0.8}
           clearcoatRoughness={0.1}
-          emissive={isHit ? new Color(hitColor) : new Color(BASE_COLOR).multiplyScalar(0.05)}
+          emissive={isHit ? hitColor : BASE_EMISSIVE}
           emissiveIntensity={isHit ? 1.5 : 0.1}
           toneMapped={false}
         />
       </mesh>
-      <lineSegments geometry={edgesGeo} material={EDGE_COLOR} />
-      <group ref={shadowGroupRef} position={[0, halfH, 0]} visible={false}>
-        {Array.from({ length: SHADOW_LAYER_COUNT }, (_, i) => (
-          <mesh key={i} rotation-x={-Math.PI / 2} position={[0, i * 0.001, 0]}>
-            <planeGeometry args={[1, 1]} />
-            <meshBasicMaterial
-              color="#000000"
-              transparent
-              opacity={0}
-              depthWrite={false}
-            />
-          </mesh>
-        ))}
-      </group>
+      <lineSegments geometry={edgesGeo} material={EDGE_MAT} />
+      <ShadowGroup ref={shadowGroupRef} yOffset={halfH} />
     </RigidBody>
   );
 }
