@@ -7,7 +7,7 @@ import { CAMERA, PHYSICS } from './config/gameConfig';
 import { DevPanel } from './dev/DevPanel';
 import { registerNavigate } from './navigation';
 import { SceneSwitch } from './scenes/SceneSwitch';
-import s from './game.module.css';
+import s from './game.module.scss';
 
 const cameraProps = {
   fov: CAMERA.fov,

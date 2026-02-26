@@ -1,4 +1,4 @@
-import s from './dev.module.css';
+import s from './dev.module.scss';
 
 interface SliderProps {
   label: string;

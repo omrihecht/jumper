@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../state/gameStore';
-import s from './ui.module.css';
+import s from './ui.module.scss';
 
 /**
  * Pause overlay with resume and quit options.

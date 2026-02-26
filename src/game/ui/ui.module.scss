@@ -1,0 +1,91 @@
+@use '../../variables' as *;
+
+.overlay {
+  @include overlay-base;
+  background: rgba(0, 0, 0, 0.35);
+  gap: 16px;
+}
+
+.overlayTransparent {
+  composes: overlay;
+  background: transparent;
+  gap: 24px;
+}
+
+.heading {
+  font-family: $font-caveat;
+  font-size: 120px;
+  margin: 0;
+  text-shadow: $shadow-text;
+}
+
+.headingGlow {
+  composes: heading;
+  text-shadow: $shadow-glow;
+}
+
+.button {
+  padding: 16px 48px;
+  font-size: 22px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  background: $cyan;
+  color: $bg-darker;
+  font-weight: bold;
+  transition: transform 0.15s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.scoreText {
+  font-size: 24px;
+}
+
+.timeText {
+  font-size: 20px;
+}
+
+// ─── HUD ───
+
+.stats {
+  @include hud-panel(left);
+  font-size: 18px;
+}
+
+.debug {
+  @include hud-panel(right);
+  font-size: 14px;
+  text-align: right;
+}
+
+// ─── PauseMenu ───
+
+.pauseHeading {
+  font-family: $font-caveat;
+  font-size: 72px;
+  margin: 0;
+  text-shadow: $shadow-text;
+}
+
+// ─── LevelUpOverlay ───
+
+.levelUpOverlay {
+  composes: overlay;
+  background: rgba(0, 0, 0, 0.55);
+  gap: 12px;
+}
+
+.levelUpHeading {
+  font-family: $font-caveat;
+  font-size: 84px;
+  margin: 0;
+  text-shadow: $shadow-glow;
+}
+
+.subText {
+  font-size: 22px;
+  opacity: 0.7;
+}

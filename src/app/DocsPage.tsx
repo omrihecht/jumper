@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
-import s from './docs.module.css';
+import s from './docs.module.scss';
 
 declare global {
   interface Window {
@@ -313,14 +313,14 @@ stateDiagram-v2
 │   ├── HUD.tsx                  # Score, lives, timer
 │   ├── PauseMenu.tsx            # Pause overlay
 │   ├── LevelUpOverlay.tsx       # Level-up transition (2s auto-advance)
-│   └── ui.module.css            # Shared UI styles
+│   └── ui.module.scss           # Shared UI styles (SCSS)
 └── dev/
     ├── devStore.ts              # Runtime config store
     ├── DevPanel.tsx             # Collapsible debug panel
     ├── PhysicsControls.tsx      # Physics sliders
     ├── CameraControls.tsx       # Camera sliders
     ├── Slider.tsx               # Reusable slider
-    ├── dev.module.css           # Dev panel styles
+    ├── dev.module.scss          # Dev panel styles (SCSS)
     ├── useDevGravity.ts         # Runtime gravity sync
     └── useDevDamping.ts         # Runtime damping sync`}</pre>
         </section>

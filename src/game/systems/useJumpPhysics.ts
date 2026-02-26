@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import type { RefObject } from 'react';
 import type { RapierRigidBody } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
@@ -7,20 +7,7 @@ import { KEY_BINDINGS } from '../config/controls';
 import { useGameStore } from '../state/gameStore';
 import { useDevStore } from '../dev/devStore';
 
-const _jumpKeys = new Set<string>();
 const jumpKeyCodes = new Set(KEY_BINDINGS.jump);
-
-if (typeof window !== 'undefined') {
-  window.addEventListener('keydown', (e) => {
-    if (jumpKeyCodes.has(e.code)) {
-      e.preventDefault();
-      _jumpKeys.add(e.code);
-    }
-  });
-  window.addEventListener('keyup', (e) => {
-    if (jumpKeyCodes.has(e.code)) _jumpKeys.delete(e.code);
-  });
-}
 
 export function useJumpPhysics(
   rigidBodyRef: RefObject<RapierRigidBody | null>
@@ -28,6 +15,28 @@ export function useJumpPhysics(
   const timeSinceGrounded = useRef(0);
   const jumpBufferTimer = useRef(0);
   const jumpCooldownTimer = useRef(0);
+  const jumpKeys = useRef(new Set<string>());
+
+  useEffect(() => {
+    const keys = jumpKeys.current;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (jumpKeyCodes.has(e.code)) {
+        e.preventDefault();
+        keys.add(e.code);
+      }
+    };
+    const onKeyUp = (e: KeyboardEvent) => {
+      if (jumpKeyCodes.has(e.code)) keys.delete(e.code);
+    };
+
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('keyup', onKeyUp);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      window.removeEventListener('keyup', onKeyUp);
+      keys.clear();
+    };
+  }, []);
 
   useFrame((_, delta) => {
     const body = rigidBodyRef.current;
@@ -51,7 +60,7 @@ export function useJumpPhysics(
     jumpCooldownTimer.current = Math.max(0, jumpCooldownTimer.current - delta);
     jumpBufferTimer.current = Math.max(0, jumpBufferTimer.current - delta);
 
-    if (_jumpKeys.size > 0) {
+    if (jumpKeys.current.size > 0) {
       jumpBufferTimer.current = JUMP.bufferTime;
     }
 

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useGameStore } from '../state/gameStore';
-import s from './ui.module.css';
+import s from './ui.module.scss';
 
 const LEVEL_UP_DURATION_MS = 2000;
 

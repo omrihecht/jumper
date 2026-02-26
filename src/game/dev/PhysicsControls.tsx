@@ -1,6 +1,6 @@
 import { useDevStore } from './devStore';
 import { Slider } from './Slider';
-import s from './dev.module.css';
+import s from './dev.module.scss';
 
 export function PhysicsControls() {
   const physics = useDevStore((s) => s.physics);

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { PhysicsControls } from './PhysicsControls';
 import { CameraControls } from './CameraControls';
 import { useDevStore } from './devStore';
-import s from './dev.module.css';
+import s from './dev.module.scss';
 
 export function DevPanel() {
   const [open, setOpen] = useState(false);

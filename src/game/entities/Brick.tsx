@@ -9,6 +9,8 @@ import { useBrickHitGlow } from '../systems/useBrickHitGlow';
 import { useBrickLifecycle } from '../systems/useBrickLifecycle';
 import { ShadowGroup } from './ShadowGroup';
 
+const EDGE_MAT = new LineBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.4 });
+
 interface BrickProps {
   x: number;
   z: number;
@@ -33,12 +35,11 @@ export const Brick = memo(function Brick({ x, z, size, phaseOffset }: BrickProps
   useBrickLifecycle(rigidBodyRef, meshGroupRef, hitColorRef, phaseOffset, size[1]);
   const shadowGroupRef = useBrickShadow(rigidBodyRef);
 
-  const { edgesGeo, edgeMat } = useMemo(() => {
+  const edgesGeo = useMemo(() => {
     const box = new BoxGeometry(...size);
     const edges = new EdgesGeometry(box);
     box.dispose();
-    const mat = new LineBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.4 });
-    return { edgesGeo: edges, edgeMat: mat };
+    return edges;
   }, [size]);
 
   const halfH = size[1] / 2 + 0.01;
@@ -64,7 +65,7 @@ export const Brick = memo(function Brick({ x, z, size, phaseOffset }: BrickProps
             toneMapped={false}
           />
         </mesh>
-        <lineSegments geometry={edgesGeo} material={edgeMat} />
+        <lineSegments geometry={edgesGeo} material={EDGE_MAT} />
         <ShadowGroup ref={shadowGroupRef} yOffset={halfH} />
       </group>
     </RigidBody>

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useGameStore } from '../state/gameStore';
 import { useScreenSync } from '../state/useScreenSync';
-import s from '../ui/ui.module.css';
+import s from '../ui/ui.module.scss';
 
 /** Victory overlay shown after completing all levels. */
 export function YouWinScreen() {
