@@ -1,21 +1,23 @@
 # Config
 
-All tunable game parameters live here so gameplay can be tweaked without touching logic code.
+All tunable game parameters live here — no magic numbers in game logic.
 
 ## Files
 
-| File             | Description                                         |
-| ---------------- | --------------------------------------------------- |
-| `gameConfig.ts`  | Physics, movement, jump, camera, and player params  |
-| `levelConfig.ts` | Level definitions (grid size, wave params, colors)   |
-| `controls.ts`    | Keyboard key bindings for game actions               |
+| File             | Contents                                                   |
+| ---------------- | ---------------------------------------------------------- |
+| `gameConfig.ts`  | Physics, movement, jump, camera, player, platform, lighting, environment, death plane |
+| `levelConfig.ts` | Per-level definitions: grid size, wave params, colors       |
+| `controls.ts`    | Key bindings and reverse lookup map (`KEY_TO_ACTION`)       |
 
-## Adding a New Parameter
+## Adding a Parameter
 
-1. Add a named constant to the appropriate config file.
-2. Use `as const` for literal types where possible.
-3. Import the constant in the system or entity that needs it.
+1. Add the constant to the appropriate section in `gameConfig.ts`.
+2. If it should be tunable at runtime, also add it to `dev/devStore.ts`
+   and the corresponding dev panel component.
 
-## Adding a New Level
+## Adding a Level
 
-Add an entry to the `LEVELS` array in `levelConfig.ts` following the `LevelConfig` interface. Adjust grid size, wave amplitude/frequency, and brick dimensions to create the desired difficulty.
+Add an entry to the `LEVELS` array in `levelConfig.ts`.
+Each level defines grid dimensions, brick spacing/size, wave parameters,
+start/end gaps, and brick color.

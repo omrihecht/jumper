@@ -32,7 +32,8 @@ export function GameCamera() {
     const dz = playerZ - lastPlayerZ.current;
     lastPlayerZ.current = playerZ;
 
-    if (Math.abs(dz) > 0.001) {
+    const EPSILON = 0.001;
+    if (Math.abs(dz) > EPSILON) {
       controls.target.z += dz;
       camera.position.z += dz;
     }
@@ -56,10 +57,10 @@ export function GameCamera() {
       ref={controlsRef}
       target={[...CAMERA.lookAt]}
       enableDamping
-      dampingFactor={0.1}
-      minDistance={5}
-      maxDistance={150}
-      maxPolarAngle={Math.PI / 2.1}
+      dampingFactor={CAMERA.dampingFactor}
+      minDistance={CAMERA.minDistance}
+      maxDistance={CAMERA.maxDistance}
+      maxPolarAngle={CAMERA.maxPolarAngle}
     />
   );
 }

@@ -130,47 +130,52 @@ stateDiagram-v2
         <section style={sectionStyle}>
           <h2 style={h2Style}>Directory Structure</h2>
           <pre style={codeStyle}>{`src/game/
-├── Game.tsx                    # R3F Canvas + Physics wrapper
+├── Game.tsx                     # R3F Canvas + Physics wrapper
 ├── scenes/
-│   ├── GameScene.tsx           # Gameplay scene graph
-│   ├── MenuScene.tsx           # Start screen
-│   └── GameOverScene.tsx       # Win/lose screen
+│   ├── GameScene.tsx            # Gameplay scene graph
+│   ├── MenuScene.tsx            # Start screen
+│   └── GameOverScene.tsx        # Win/lose screen
 ├── entities/
-│   ├── Player.tsx              # Player mesh + rigid body
-│   ├── Brick.tsx               # Oscillating brick with glow + shadow
-│   ├── BrickSea.tsx            # Grid manager
-│   ├── StartPlatform.tsx       # Start platform
-│   └── EndPlatform.tsx         # Goal platform
+│   ├── Player.tsx               # Player mesh + rigid body
+│   ├── Brick.tsx                # Oscillating brick (delegates to hooks)
+│   ├── BrickSea.tsx             # Grid manager
+│   ├── StartPlatform.tsx        # Spawn platform
+│   └── EndPlatform.tsx          # Goal platform (triggers win)
 ├── systems/
-│   ├── usePlayerController.ts  # Keyboard → velocity
-│   ├── useJumpPhysics.ts       # Jump + coyote time
-│   ├── useWaveAnimation.ts     # Per-brick sine wave
-│   ├── useCollisionDetection.ts# Death plane
-│   └── useGameLoop.ts          # Frame tick coordinator
+│   ├── usePlayerController.ts   # Keyboard → velocity
+│   ├── useJumpPhysics.ts        # Jump + coyote time + input buffer
+│   ├── useWaveAnimation.ts      # Per-brick sine wave
+│   ├── useBrickShadow.ts        # Player proximity shadow on bricks
+│   ├── useBrickHitGlow.ts       # Neon glow on player contact
+│   ├── useCollisionDetection.ts # Death plane check
+│   └── useGameLoop.ts           # Frame tick coordinator
 ├── state/
-│   ├── gameStore.ts            # Zustand store
-│   └── types.ts                # TypeScript interfaces
+│   ├── gameStore.ts             # Zustand store
+│   └── types.ts                 # TypeScript interfaces
 ├── config/
-│   ├── gameConfig.ts           # Physics, movement, camera
-│   ├── levelConfig.ts          # Level definitions
-│   └── controls.ts             # Key bindings
+│   ├── gameConfig.ts            # Physics, movement, camera, lighting
+│   ├── levelConfig.ts           # Level definitions
+│   └── controls.ts              # Key bindings
 ├── camera/
-│   ├── GameCamera.tsx          # OrbitControls + Z follow
-│   └── cameraDebugStore.ts     # Debug coord store
+│   ├── GameCamera.tsx           # OrbitControls + Z follow
+│   └── cameraDebugStore.ts      # Debug coord store
 ├── environment/
-│   ├── Lighting.tsx            # Scene lights
-│   └── Sky.tsx                 # Background color
+│   ├── Lighting.tsx             # Scene lights (from config)
+│   └── Sky.tsx                  # Background color (from config)
 ├── ui/
-│   ├── HUD.tsx                 # Score, lives, timer
-│   ├── PauseMenu.tsx           # Pause overlay
-│   └── GameUI.tsx              # UI router
+│   ├── GameUI.tsx               # Phase-based UI router
+│   ├── MenuOverlay.tsx          # Start screen overlay
+│   ├── GameOverOverlay.tsx      # Win/lose overlay
+│   ├── HUD.tsx                  # Score, lives, timer
+│   └── PauseMenu.tsx            # Pause overlay
 └── dev/
-    ├── devStore.ts             # Runtime config store
-    ├── DevPanel.tsx            # Collapsible debug panel
-    ├── PhysicsControls.tsx     # Physics sliders
-    ├── CameraControls.tsx      # Camera sliders
-    ├── Slider.tsx              # Reusable slider
-    └── useDevGravity.ts        # Runtime gravity sync`}</pre>
+    ├── devStore.ts              # Runtime config store
+    ├── DevPanel.tsx             # Collapsible debug panel
+    ├── PhysicsControls.tsx      # Physics sliders
+    ├── CameraControls.tsx       # Camera sliders
+    ├── Slider.tsx               # Reusable slider
+    ├── styles.ts                # Shared dev panel styles
+    └── useDevGravity.ts         # Runtime gravity sync`}</pre>
         </section>
 
         <section style={sectionStyle}>

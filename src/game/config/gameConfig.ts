@@ -28,6 +28,10 @@ export const CAMERA = {
   fov: 60,
   near: 0.1,
   far: 1000,
+  minDistance: 5,
+  maxDistance: 150,
+  maxPolarAngle: Math.PI / 2.1,
+  dampingFactor: 0.1,
 } as const;
 
 export const PLAYER = {
@@ -42,3 +46,18 @@ export const PLATFORM = {
   startColor: '#39ff14',
   endColor: '#ff355e',
 } as const;
+
+export const LIGHTING = {
+  ambientIntensity: 0.3,
+  directionalIntensity: 0.8,
+  directionalPosition: [10, 20, 10] as readonly [number, number, number],
+  shadowMapSize: 2048,
+  shadowCameraExtent: 20,
+  shadowCameraFar: 50,
+} as const;
+
+export const ENVIRONMENT = {
+  backgroundColor: '#1a1a1a',
+} as const;
+
+export const DEATH_PLANE_Y = -20;

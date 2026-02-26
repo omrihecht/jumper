@@ -1,18 +1,20 @@
+import { LIGHTING } from '../config/gameConfig';
+
 export function Lighting() {
   return (
     <>
-      <ambientLight intensity={0.3} />
+      <ambientLight intensity={LIGHTING.ambientIntensity} />
       <directionalLight
-        position={[10, 20, 10]}
-        intensity={0.8}
+        position={[...LIGHTING.directionalPosition]}
+        intensity={LIGHTING.directionalIntensity}
         castShadow
-        shadow-mapSize-width={2048}
-        shadow-mapSize-height={2048}
-        shadow-camera-far={50}
-        shadow-camera-left={-20}
-        shadow-camera-right={20}
-        shadow-camera-top={20}
-        shadow-camera-bottom={-20}
+        shadow-mapSize-width={LIGHTING.shadowMapSize}
+        shadow-mapSize-height={LIGHTING.shadowMapSize}
+        shadow-camera-far={LIGHTING.shadowCameraFar}
+        shadow-camera-left={-LIGHTING.shadowCameraExtent}
+        shadow-camera-right={LIGHTING.shadowCameraExtent}
+        shadow-camera-top={LIGHTING.shadowCameraExtent}
+        shadow-camera-bottom={-LIGHTING.shadowCameraExtent}
       />
     </>
   );

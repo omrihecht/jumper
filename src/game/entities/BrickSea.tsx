@@ -3,8 +3,7 @@ import { Brick } from './Brick';
 import { useGameStore } from '../state/gameStore';
 
 interface BrickData {
-  col: number;
-  row: number;
+  key: string;
   x: number;
   z: number;
   phaseOffset: number;
@@ -25,8 +24,7 @@ export function BrickSea() {
     for (let row = 0; row < level.gridRows; row++) {
       for (let col = 0; col < level.gridCols; col++) {
         result.push({
-          col,
-          row,
+          key: `${col}-${row}`,
           x: col * level.brickSpacing - offsetX,
           z: startZ - row * level.brickSpacing,
           phaseOffset: (row + col) * level.wavePhaseScale,
@@ -40,9 +38,7 @@ export function BrickSea() {
     <>
       {bricks.map((b) => (
         <Brick
-          key={`${b.col}-${b.row}`}
-          col={b.col}
-          row={b.row}
+          key={b.key}
           x={b.x}
           z={b.z}
           size={level.brickSize}

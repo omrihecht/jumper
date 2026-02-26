@@ -3,8 +3,24 @@ import type { RefObject } from 'react';
 import type { RapierRigidBody } from '@react-three/rapier';
 import { useFrame } from '@react-three/fiber';
 import { JUMP } from '../config/gameConfig';
+import { KEY_BINDINGS } from '../config/controls';
 import { useGameStore } from '../state/gameStore';
 import { useDevStore } from '../dev/devStore';
+
+const _jumpKeys = new Set<string>();
+const jumpKeyCodes = new Set(KEY_BINDINGS.jump);
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('keydown', (e) => {
+    if (jumpKeyCodes.has(e.code)) {
+      e.preventDefault();
+      _jumpKeys.add(e.code);
+    }
+  });
+  window.addEventListener('keyup', (e) => {
+    if (jumpKeyCodes.has(e.code)) _jumpKeys.delete(e.code);
+  });
+}
 
 export function useJumpPhysics(
   rigidBodyRef: RefObject<RapierRigidBody | null>
@@ -35,8 +51,7 @@ export function useJumpPhysics(
     jumpCooldownTimer.current = Math.max(0, jumpCooldownTimer.current - delta);
     jumpBufferTimer.current = Math.max(0, jumpBufferTimer.current - delta);
 
-    const jumpPressed = isJumpKeyDown();
-    if (jumpPressed) {
+    if (_jumpKeys.size > 0) {
       jumpBufferTimer.current = JUMP.bufferTime;
     }
 
@@ -57,23 +72,5 @@ export function useJumpPhysics(
     if (vel.y < -0.1 && player.isJumping) {
       setPlayerJumping(false);
     }
-  });
-}
-
-const _jumpKeys = new Set<string>();
-
-function isJumpKeyDown() {
-  return _jumpKeys.size > 0;
-}
-
-if (typeof window !== 'undefined') {
-  window.addEventListener('keydown', (e) => {
-    if (e.code === 'Space') {
-      e.preventDefault();
-      _jumpKeys.add(e.code);
-    }
-  });
-  window.addEventListener('keyup', (e) => {
-    if (e.code === 'Space') _jumpKeys.delete(e.code);
   });
 }

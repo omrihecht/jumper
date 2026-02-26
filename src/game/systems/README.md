@@ -1,20 +1,22 @@
 # Systems
 
-Systems are custom React hooks that encapsulate one slice of game logic. They read/write to the Zustand store and run per-frame via `useFrame` or event listeners.
+Custom hooks that encapsulate one slice of game logic.
+Called inside scene components or entities via `useFrame`.
 
-## Existing Systems
+## Files
 
-| File                       | Description                                      |
-| -------------------------- | ------------------------------------------------ |
-| `usePlayerController.ts`   | Maps keyboard/touch input to movement intent     |
-| `useJumpPhysics.ts`        | Manages jump arc, gravity, and landing detection |
-| `useWaveAnimation.ts`      | Drives sine-wave Y position for bricks           |
-| `useCollisionDetection.ts` | Handles player ↔ brick/platform collisions       |
-| `useGameLoop.ts`           | Coordinates per-frame updates across systems     |
+| File                       | Description                                         |
+| -------------------------- | --------------------------------------------------- |
+| `usePlayerController.ts`   | Keyboard input → player velocity                    |
+| `useJumpPhysics.ts`        | Jump with coyote time and input buffering           |
+| `useWaveAnimation.ts`      | Per-brick sine wave Y oscillation                   |
+| `useCollisionDetection.ts` | Death plane check — triggers life loss / game over  |
+| `useGameLoop.ts`           | Frame tick coordinator (calls collision + timer)    |
+| `useBrickShadow.ts`        | Player proximity shadow on bricks                   |
+| `useBrickHitGlow.ts`       | Neon color glow when player lands on a brick        |
 
-## Adding a New System
+## Adding a System
 
-1. Create a new `use<Name>.ts` file in this directory.
-2. Import from `state/gameStore` and `config/` as needed.
-3. Use `useFrame` from `@react-three/fiber` for per-frame logic.
-4. Register the hook inside `useGameLoop` or call it directly in the relevant entity/scene.
+1. Create a `use*.ts` hook in this directory.
+2. Call it from the relevant entity or scene component.
+3. Read/write game state via `useGameStore.getState()` inside `useFrame`.

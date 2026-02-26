@@ -1,24 +1,27 @@
 # State
 
-Game state is managed with a single Zustand store. All runtime data (phase, score, player position, etc.) lives here and is shared across systems and entities via selectors.
+Zustand store managing all runtime game state, decoupled from rendering.
 
 ## Files
 
-| File           | Description                                |
-| -------------- | ------------------------------------------ |
-| `gameStore.ts` | Zustand store with state + actions          |
-| `types.ts`     | TypeScript interfaces for the store shape  |
+| File           | Description                                        |
+| -------------- | -------------------------------------------------- |
+| `types.ts`     | TypeScript interfaces: `GamePhase`, `PlayerState`, `GameState`, `GameActions` |
+| `gameStore.ts` | Zustand store with phase transitions, player state, scoring |
 
 ## Game Phase State Machine
 
 ```
-Menu → Playing → Won → Menu
-                → Lost → Menu
-     Playing ↔ Paused
+[*] → Menu
+Menu → Playing (startGame)
+Playing → Paused (pauseGame)
+Paused → Playing (resumeGame)
+Playing → Won (winGame — triggered by EndPlatform collision)
+Playing → Lost (loseLife when lives reach 0)
+Won / Lost → Menu (returnToMenu)
 ```
 
-## Extending the Store
+## Extending
 
-1. Add the new field to `GameState` in `types.ts`.
-2. Add any related actions to `GameActions`.
-3. Provide the initial value and action implementations in `gameStore.ts`.
+Add new state fields to `GameState` in `types.ts`, then implement
+the corresponding actions in `gameStore.ts`.

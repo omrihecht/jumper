@@ -1,7 +1,6 @@
 import { useFrame } from '@react-three/fiber';
+import { DEATH_PLANE_Y } from '../config/gameConfig';
 import { useGameStore } from '../state/gameStore';
-
-const DEATH_PLANE_Y = -20;
 
 /**
  * Checks each frame whether the player has fallen

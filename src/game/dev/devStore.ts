@@ -18,10 +18,6 @@ export interface DevJump {
 
 export interface DevCamera {
   fov: number;
-  offsetY: number;
-  offsetZ: number;
-  lookAtZ: number;
-  smoothSpeed: number;
 }
 
 interface DevState {
@@ -56,10 +52,6 @@ const defaults: DevState = {
   },
   camera: {
     fov: CAMERA.fov,
-    offsetY: CAMERA.offset[1],
-    offsetZ: CAMERA.offset[2],
-    lookAtZ: CAMERA.lookAt[2],
-    smoothSpeed: CAMERA.smoothSpeed,
   },
 };
 

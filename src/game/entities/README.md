@@ -1,20 +1,18 @@
 # Entities
 
-Entities are React components that render a single game object. Each entity owns its mesh, material, and (optionally) a Rapier rigid body.
+React components that render a single game object (mesh + rigid body).
 
-## Existing Entities
+## Files
 
-| File                | Description                                         |
-| ------------------- | --------------------------------------------------- |
-| `Player.tsx`        | Player mesh with rigid body and animations          |
-| `Brick.tsx`         | Single oscillating brick with kinematic rigid body  |
-| `BrickSea.tsx`      | Grid manager that spawns `Brick` instances          |
-| `StartPlatform.tsx` | Fixed starting platform                             |
-| `EndPlatform.tsx`   | Goal platform that triggers the win condition       |
+| File               | Description                                              |
+| ------------------ | -------------------------------------------------------- |
+| `Player.tsx`       | Player cube with physics body and collision detection    |
+| `Brick.tsx`        | Oscillating brick with hit glow and player shadow        |
+| `BrickSea.tsx`     | Grid manager that spawns Brick instances from level config |
+| `StartPlatform.tsx`| Fixed spawn platform                                    |
+| `EndPlatform.tsx`  | Goal platform — triggers win condition on collision      |
 
-## Adding a New Entity
+## Adding an Entity
 
-1. Create a new `.tsx` file in this directory.
-2. Export a React component that returns a `<mesh>` (or group) with appropriate geometry, material, and optional `<RigidBody>`.
-3. Accept configuration via props or import from `config/`.
-4. Wire the entity into `scenes/GameScene.tsx`.
+1. Create a component in this directory with a `<RigidBody>` and mesh.
+2. Wire it into the appropriate scene in `scenes/`.
