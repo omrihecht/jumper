@@ -14,9 +14,9 @@ export function LevelUpOverlay() {
   }, [advanceLevel]);
 
   return (
-    <div className={s.levelUpOverlay}>
-      <h1 className={s.levelUpHeading}>Level Up!</h1>
-      <p className={s.subText}>Get ready for Level {levelIndex + 2}</p>
+    <div className={s.levelUp}>
+      <h1>Level Up!</h1>
+      <p>Get ready for Level {levelIndex + 2}</p>
     </div>
   );
 }

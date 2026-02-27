@@ -17,12 +17,10 @@ export function GameOverScreen() {
 
   return (
     <div className={s.overlay}>
-      <h1 className={s.heading}>Game Over</h1>
-      <p className={s.scoreText}>Score: {score}</p>
-      <p className={s.timeText}>Time: {elapsedTime.toFixed(1)}s</p>
-      <button onClick={handlePlayAgain} className={s.button}>
-        Play Again
-      </button>
+      <h1>Game Over</h1>
+      <p>Score: {score}</p>
+      <p>Time: {elapsedTime.toFixed(1)}s</p>
+      <button onClick={handlePlayAgain}>Play Again</button>
     </div>
   );
 }

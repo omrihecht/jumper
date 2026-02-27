@@ -10,19 +10,15 @@ export function DevPanel() {
 
   return (
     <div className={s.container}>
-      <button onClick={() => setOpen((o) => !o)} className={s.toggle}>
+      <button onClick={() => setOpen((o) => !o)}>
         {open ? '▼ Dev' : '► Dev'}
       </button>
       {open && (
         <div className={s.panel}>
           <PhysicsControls />
           <CameraControls />
-          <button onClick={resetAll} className={s.reset}>
-            Reset All
-          </button>
-          <a href="/jumper/docs" className={s.docsLink}>
-            Docs
-          </a>
+          <button onClick={resetAll}>Reset All</button>
+          <a href="/jumper/docs">Docs</a>
         </div>
       )}
     </div>

@@ -16,14 +16,10 @@ export function PauseMenu() {
   };
 
   return (
-    <div className={s.overlay}>
-      <h1 className={s.pauseHeading}>Paused</h1>
-      <button onClick={resumeGame} className={s.button}>
-        Resume
-      </button>
-      <button onClick={handleQuit} className={s.button}>
-        Quit to Menu
-      </button>
+    <div className={s.pause}>
+      <h1>Paused</h1>
+      <button onClick={resumeGame}>Resume</button>
+      <button onClick={handleQuit}>Quit to Menu</button>
     </div>
   );
 }

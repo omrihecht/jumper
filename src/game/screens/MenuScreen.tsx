@@ -14,11 +14,9 @@ export function MenuScreen() {
   };
 
   return (
-    <div className={s.overlayTransparent}>
-      <h1 className={s.heading}>Jumper</h1>
-      <button onClick={handleStart} className={s.button}>
-        Start Game
-      </button>
+    <div className={s.transparent}>
+      <h1>Jumper</h1>
+      <button onClick={handleStart}>Start Game</button>
     </div>
   );
 }

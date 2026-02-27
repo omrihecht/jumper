@@ -59,22 +59,22 @@ export function DocsPage() {
 
   return (
     <div className={s.page}>
-      <nav className={s.nav}>
-        <Link to="/" className={s.navLink}>Play Game</Link>
-        <span className={s.navTitle}>Jumper — Architecture Docs</span>
+      <nav>
+        <Link to="/">Play Game</Link>
+        <span>Jumper — Architecture Docs</span>
       </nav>
 
-      <main className={s.main}>
-        <section className={s.section}>
-          <h1 className={s.h1}>Jumper Game Architecture</h1>
-          <p className={s.desc}>
+      <main>
+        <section>
+          <h1>Jumper Game Architecture</h1>
+          <p>
             A third-person 3D platformer where the player jumps across a sea of sine-wave-oscillating bricks
             to reach the end platform. Built with React Three Fiber on React 19 + Vite + TypeScript.
           </p>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>Tech Stack</h2>
+        <section>
+          <h2>Tech Stack</h2>
           <div className={s.grid}>
             {[
               ['React Three Fiber', 'React renderer for Three.js — declarative 3D scene graph'],
@@ -84,17 +84,17 @@ export function DocsPage() {
               ['Vite 7 + TypeScript', 'Fast dev server with full type safety'],
               ['Nx', 'Monorepo tooling and task orchestration'],
             ].map(([name, desc]) => (
-              <div key={name} className={s.card}>
-                <strong className={s.cardTitle}>{name}</strong>
-                <span className={s.cardDesc}>{desc}</span>
+              <div key={name}>
+                <strong>{name}</strong>
+                <span>{desc}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>Architecture Principles</h2>
-          <ol className={s.list}>
+        <section>
+          <h2>Architecture Principles</h2>
+          <ol>
             <li><strong>Entities</strong> — React components rendering a single game object (mesh + rigid body)</li>
             <li><strong>Systems</strong> — Custom hooks encapsulating one slice of game logic (input, physics, animation)</li>
             <li><strong>State</strong> — Zustand store, decoupled from rendering</li>
@@ -102,13 +102,13 @@ export function DocsPage() {
           </ol>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>Data Flow</h2>
-          <p className={s.desc}>
+        <section>
+          <h2>Data Flow</h2>
+          <p>
             How input propagates through systems, state, and rendering layers.
-            Dashed lines indicate reads via <code className={s.inlineCode}>getState()</code> (no React subscription).
+            Dashed lines indicate reads via <code>getState()</code> (no React subscription).
           </p>
-          <figure className={s.figure}>
+          <figure>
             <div className={`mermaid ${s.diagram}`}>{`
 flowchart TD
     subgraph input ["🎮 Input Layer"]
@@ -153,17 +153,17 @@ flowchart TD
     Store --> Camera
     Store --> UI
             `}</div>
-            <figcaption className={s.caption}>Input → Systems → State → Rendering pipeline</figcaption>
+            <figcaption>Input → Systems → State → Rendering pipeline</figcaption>
           </figure>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>Game State Machine</h2>
-          <p className={s.desc}>
-            Route transitions shown alongside state changes. The Zustand <code className={s.inlineCode}>phase</code> drives
+        <section>
+          <h2>Game State Machine</h2>
+          <p>
+            Route transitions shown alongside state changes. The Zustand <code>phase</code> drives
             in-game sub-states while React Router handles top-level screen navigation.
           </p>
-          <figure className={s.figure}>
+          <figure>
             <div className={`mermaid ${s.diagram}`}>{`
 stateDiagram-v2
     [*] --> Menu: /
@@ -179,25 +179,25 @@ stateDiagram-v2
     Won --> Menu: Play Again → /
     Lost --> Menu: Play Again → /
             `}</div>
-            <figcaption className={s.caption}>Phase transitions and their corresponding routes</figcaption>
+            <figcaption>Phase transitions and their corresponding routes</figcaption>
           </figure>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>State Management</h2>
-          <p className={s.desc}>
-            Game state is managed by a single Zustand store (<code className={s.inlineCode}>gameStore</code>).
+        <section>
+          <h2>State Management</h2>
+          <p>
+            Game state is managed by a single Zustand store (<code>gameStore</code>).
             Screen-level navigation is handled by React Router, while in-game sub-states
-            are driven by the store's <code className={s.inlineCode}>phase</code> field.
+            are driven by the store's <code>phase</code> field.
           </p>
 
-          <h3 className={s.h3}>Store Shape</h3>
-          <table className={s.table}>
+          <h3>Store Shape</h3>
+          <table>
             <thead>
               <tr>
-                <th className={s.th}>Field</th>
-                <th className={s.th}>Type</th>
-                <th className={s.th}>Purpose</th>
+                <th>Field</th>
+                <th>Type</th>
+                <th>Purpose</th>
               </tr>
             </thead>
             <tbody>
@@ -213,15 +213,15 @@ stateDiagram-v2
                 ['resetCount', 'number', 'Increments on respawn (signals systems)'],
               ].map(([field, type, purpose]) => (
                 <tr key={field}>
-                  <td className={s.tdKey}>{field}</td>
-                  <td className={s.tdType}>{type}</td>
-                  <td className={s.td}>{purpose}</td>
+                  <td>{field}</td>
+                  <td className={s.mono}>{type}</td>
+                  <td>{purpose}</td>
                 </tr>
               ))}
             </tbody>
           </table>
 
-          <h3 className={s.h3}>Dual Routing Strategy</h3>
+          <h3>Dual Routing Strategy</h3>
           <div className={s.grid}>
             {[
               ['React Router', 'Top-level screens (menu, play, game-over, you-win). URL-driven, supports refresh and deep-linking.'],
@@ -229,25 +229,25 @@ stateDiagram-v2
               ['useScreenSync', 'Hook that syncs the mounted route to currentScreen on mount, so SceneSwitch renders the correct 3D scene after a page refresh.'],
               ['navigateTo()', 'Imperative navigation for R3F hooks (e.g. collision handlers) that live outside the React Router tree.'],
             ].map(([name, desc]) => (
-              <div key={name} className={s.card}>
-                <strong className={s.cardTitle}>{name}</strong>
-                <span className={s.cardDesc}>{desc}</span>
+              <div key={name}>
+                <strong>{name}</strong>
+                <span>{desc}</span>
               </div>
             ))}
           </div>
 
-          <h3 className={s.h3}>Access Patterns</h3>
-          <ul className={s.list}>
-            <li><strong>UI components</strong> — Use selector hooks (<code className={s.inlineCode}>useGameStore(s =&gt; s.score)</code>) to subscribe and re-render on change.</li>
-            <li><strong>useFrame loops</strong> — Use <code className={s.inlineCode}>useGameStore.getState()</code> to read without creating subscriptions (avoids 60fps re-renders across all bricks).</li>
-            <li><strong>Event handlers</strong> — Use <code className={s.inlineCode}>useGameStore.getState().actionName()</code> for fire-and-forget mutations (e.g. collision callbacks).</li>
-            <li><strong>Player position</strong> — Mutated in-place (never triggers <code className={s.inlineCode}>set()</code>) since no component subscribes to it.</li>
+          <h3>Access Patterns</h3>
+          <ul>
+            <li><strong>UI components</strong> — Use selector hooks (<code>useGameStore(s =&gt; s.score)</code>) to subscribe and re-render on change.</li>
+            <li><strong>useFrame loops</strong> — Use <code>useGameStore.getState()</code> to read without creating subscriptions (avoids 60fps re-renders across all bricks).</li>
+            <li><strong>Event handlers</strong> — Use <code>useGameStore.getState().actionName()</code> for fire-and-forget mutations (e.g. collision callbacks).</li>
+            <li><strong>Player position</strong> — Mutated in-place (never triggers <code>set()</code>) since no component subscribes to it.</li>
           </ul>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>Lives & Respawn</h2>
-          <ul className={s.list}>
+        <section>
+          <h2>Lives & Respawn</h2>
+          <ul>
             <li>Player starts with <strong>3 lives</strong> (4 total attempts)</li>
             <li>Falling below the death plane costs 1 life and triggers a respawn</li>
             <li>Game over only when falling with <strong>0 lives</strong> remaining</li>
@@ -256,9 +256,9 @@ stateDiagram-v2
           </ul>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>Directory Structure</h2>
-          <pre className={s.codeBlock}>{`src/game/
+        <section>
+          <h2>Directory Structure</h2>
+          <pre>{`src/game/
 ├── GameLayout.tsx               # Shared Canvas + Physics layout (all routes)
 ├── navigation.ts                # Imperative navigate for R3F hooks
 ├── screens/
@@ -325,13 +325,13 @@ stateDiagram-v2
     └── useDevDamping.ts         # Runtime damping sync`}</pre>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>Controls</h2>
-          <table className={s.table}>
+        <section>
+          <h2>Controls</h2>
+          <table>
             <thead>
               <tr>
-                <th className={s.th}>Key</th>
-                <th className={s.th}>Action</th>
+                <th>Key</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -345,16 +345,16 @@ stateDiagram-v2
                 ['Right-click drag', 'Pan camera'],
               ].map(([key, action]) => (
                 <tr key={key}>
-                  <td className={s.tdKey}>{key}</td>
-                  <td className={s.td}>{action}</td>
+                  <td>{key}</td>
+                  <td>{action}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>Visual Theme</h2>
+        <section>
+          <h2>Visual Theme</h2>
           <div className={s.grid}>
             {[
               ['Background', '#1a1a1a', '#1a1a1a'],
@@ -364,24 +364,24 @@ stateDiagram-v2
               ['Start Platform', '#39ff14', '#39ff14'],
               ['End Platform', '#ff355e', '#ff355e'],
             ].map(([label, color, bg]) => (
-              <div key={label} className={s.card} style={{ borderLeft: `4px solid ${bg}` }}>
-                <div className={s.colorSwatchRow}>
-                  <div className={s.colorSwatch} style={{ background: bg, boxShadow: `0 0 8px ${bg}` }} />
-                  <strong className={s.cardTitle}>{label}</strong>
+              <div key={label} style={{ borderLeft: `4px solid ${bg}` }}>
+                <div className={s.swatchRow}>
+                  <div className={s.swatch} style={{ background: bg, boxShadow: `0 0 8px ${bg}` }} />
+                  <strong>{label}</strong>
                 </div>
-                <code className={s.colorCode}>{color}</code>
+                <code>{color}</code>
               </div>
             ))}
           </div>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>Performance Pitfalls</h2>
-          <p className={s.desc}>
+        <section>
+          <h2>Performance Pitfalls</h2>
+          <p>
             React Three Fiber apps must carefully manage when React reconciliation runs vs. when Three.js objects
             are updated imperatively. Here are the rules this codebase follows:
           </p>
-          <ul className={s.list}>
+          <ul>
             <li><strong>useFrame reads via getState()</strong> — Never use Zustand selector hooks inside useFrame callbacks. Selectors create React subscriptions; multiplied across 40+ bricks, each state change triggers mass re-renders.</li>
             <li><strong>Refs over useState for visuals</strong> — Collision-driven effects (hit glow color) use <code>useRef</code> instead of <code>useState</code>. Material properties are set imperatively by <code>useBrickLifecycle</code>, so Brick components never re-render after mount.</li>
             <li><strong>Mutate position in-place</strong> — Player position is written 60x/sec but no React component subscribes to it. The array is mutated directly, bypassing <code>set()</code> entirely.</li>
@@ -392,9 +392,9 @@ stateDiagram-v2
           </ul>
         </section>
 
-        <section className={s.section}>
-          <h2 className={s.h2}>Extensibility</h2>
-          <ul className={s.list}>
+        <section>
+          <h2>Extensibility</h2>
+          <ul>
             <li><strong>New levels</strong> — Add entries to the <code>LEVELS</code> array in <code>levelConfig.ts</code></li>
             <li><strong>New entities</strong> — Create a component in <code>entities/</code>, wire into <code>GameScene.tsx</code></li>
             <li><strong>New mechanics</strong> — Add a system hook in <code>systems/</code>, register in <code>useGameLoop</code></li>
