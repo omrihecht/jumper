@@ -1,7 +1,7 @@
 import { useRef, useMemo, useCallback } from 'react';
-import { RigidBody } from '@react-three/rapier';
+import { RigidBody, CylinderCollider } from '@react-three/rapier';
 import type { RapierRigidBody } from '@react-three/rapier';
-import { BoxGeometry, EdgesGeometry, Color } from 'three';
+import { CylinderGeometry, EdgesGeometry, Color } from 'three';
 import { PLATFORM, PLATFORM_XZ_THRESHOLD } from '../config/gameConfig';
 import { PLATFORM_EDGE_MAT } from './platformMaterials';
 import { useGameStore } from '../state/gameStore';
@@ -10,6 +10,9 @@ import { useBrickShadow } from '../systems/useBrickShadow';
 import { ShadowGroup } from './ShadowGroup';
 
 const EMISSIVE = new Color(PLATFORM.endColor);
+const RADIUS = PLATFORM.endSize[0] / 2;
+const HEIGHT = PLATFORM.endSize[1];
+const SEGMENTS = 48;
 
 /**
  * Goal platform at the far end of the brick sea.
@@ -23,9 +26,9 @@ export function EndPlatform() {
   const shadowGroupRef = useBrickShadow(rigidBodyRef, PLATFORM_XZ_THRESHOLD);
 
   const edgesGeo = useMemo(() => {
-    const box = new BoxGeometry(...PLATFORM.endSize);
-    const edges = new EdgesGeometry(box);
-    box.dispose();
+    const cyl = new CylinderGeometry(RADIUS, RADIUS, HEIGHT, SEGMENTS);
+    const edges = new EdgesGeometry(cyl, 15);
+    cyl.dispose();
     return edges;
   }, []);
 
@@ -38,27 +41,28 @@ export function EndPlatform() {
     }
   }, []);
 
-  const halfH = PLATFORM.endSize[1] / 2 + 0.01;
+  const halfH = HEIGHT / 2 + 0.01;
 
   return (
     <RigidBody
       ref={rigidBodyRef}
       type="fixed"
       position={[0, 0, z]}
-      colliders="cuboid"
+      colliders={false}
       onCollisionEnter={onCollisionEnter}
     >
+      <CylinderCollider args={[HEIGHT / 2, RADIUS]} />
       <mesh receiveShadow>
-        <boxGeometry args={[...PLATFORM.endSize]} />
+        <cylinderGeometry args={[RADIUS, RADIUS, HEIGHT, SEGMENTS]} />
         <meshPhysicalMaterial
           color={PLATFORM.endColor}
           transparent
-          opacity={0.2}
-          roughness={0.2}
-          clearcoat={0.6}
-          clearcoatRoughness={0.1}
+          opacity={0.35}
+          roughness={0.1}
+          clearcoat={0.8}
+          clearcoatRoughness={0.05}
           emissive={EMISSIVE}
-          emissiveIntensity={0.3}
+          emissiveIntensity={0.8}
           toneMapped={false}
         />
       </mesh>

@@ -78,7 +78,9 @@ Brick visual pipeline (all imperative, no React re-renders):
 ## Brick Lifecycle
 
 Each brick cycles through a sine-curve Y-scale over a configurable
-duration, then vanishes for a pause before repeating. When vanished,
+duration, then vanishes for a pause before repeating. Each brick starts
+its cycle at a random time offset, so bricks grow and vanish
+independently rather than in a predictable wave pattern. When vanished,
 the rigid body is teleported far below the scene so the player falls
 through. Opacity fades to zero as the brick approaches disappearance.
 
@@ -132,10 +134,11 @@ mutate it in place instead of going through `set()`.
 
 ### 5. Share geometry and materials across identical instances
 
-Three.js geometry objects consume GPU memory. Creating 126 identical
-`PlaneGeometry(1,1)` instances wastes memory.
+Three.js geometry and material objects consume GPU memory. With up to
+320 bricks (20×16 in level 3), creating identical resources per instance
+wastes significant memory.
 
-**Rule**: Hoist shared geometries/materials to module scope.
+**Rule**: Hoist shared geometries and materials to module scope.
 Per-instance materials are only needed when per-instance properties
 (e.g., opacity) are modified independently.
 

@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import type { MutableRefObject, RefObject } from 'react';
 import { useFrame } from '@react-three/fiber';
 import type { RapierRigidBody } from '@react-three/rapier';
@@ -31,6 +32,8 @@ export function useBrickLifecycle(
   phaseOffset: number,
   brickHeight: number,
 ) {
+  const randomOffset = useRef(Math.random() * (BRICK_LIFECYCLE.visibleDuration + BRICK_LIFECYCLE.vanishDuration));
+
   useFrame(({ clock }) => {
     const body = rigidBodyRef.current;
     const group = meshGroupRef.current;
@@ -38,7 +41,7 @@ export function useBrickLifecycle(
 
     const { visibleDuration, vanishDuration, disableThreshold, fadeThreshold } = BRICK_LIFECYCLE;
     const cycle = visibleDuration + vanishDuration;
-    const t = (clock.getElapsedTime() + phaseOffset * 2.5) % cycle;
+    const t = (clock.getElapsedTime() + randomOffset.current) % cycle;
 
     let scale: number;
     if (t < visibleDuration) {

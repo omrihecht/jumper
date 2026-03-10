@@ -9,8 +9,8 @@ React components that render a single game object (mesh + rigid body).
 | `Player.tsx`       | Player cube — delegates to usePlayerController, useJumpPhysics, usePlayerReset, useDevDamping |
 | `Brick.tsx`        | Oscillating brick — all visual props managed imperatively (no re-renders on collision) |
 | `BrickSea.tsx`     | Grid manager that spawns Brick instances from level config |
-| `StartPlatform.tsx`| Spawn platform with shadow and translucent styling       |
-| `EndPlatform.tsx`  | Goal platform — triggers win condition (+1 life)         |
+| `StartPlatform.tsx`| Cylindrical spawn platform with glow effect              |
+| `EndPlatform.tsx`  | Cylindrical goal platform — triggers win condition (+1 life) |
 | `ShadowGroup.tsx`  | Reusable multi-layer shadow plane group (shared geometry) |
 
 ## Adding an Entity
@@ -24,5 +24,9 @@ React components that render a single game object (mesh + rigid body).
   (color, emissive, opacity) are managed imperatively by `useBrickLifecycle`.
   The `useBrickHitGlow` hook uses a `ref` (not `useState`) to avoid triggering
   React reconciliation on collision.
+- **Brick edge material** (`LineBasicMaterial`) is shared across all
+  instances via a module-scope constant, avoiding per-brick duplication.
 - **ShadowGroup** shares a single `PlaneGeometry` across all instances.
   Each layer gets its own `MeshBasicMaterial` since opacity varies per brick.
+- **Platforms** use `CylinderGeometry` with `CylinderCollider` for accurate
+  physics and high emissive intensity for a glowing effect.

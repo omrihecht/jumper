@@ -8,10 +8,10 @@ Called inside scene components or entities via `useFrame`.
 | File                       | Description                                                |
 | -------------------------- | ---------------------------------------------------------- |
 | `usePlayerController.ts`   | Keyboard input → player velocity (mutates position in-place) |
-| `useJumpPhysics.ts`        | Jump with coyote time and input buffering                  |
+| `useJumpPhysics.ts`        | Jump with coyote time and input buffering (listeners in useEffect with cleanup) |
 | `usePlayerReset.ts`        | Watches resetCount and teleports rigid body to start       |
 | `useWaveAnimation.ts`      | Per-brick sine wave Y oscillation                          |
-| `useBrickLifecycle.ts`     | Brick grow/shrink/vanish cycle + all material management   |
+| `useBrickLifecycle.ts`     | Brick grow/shrink/vanish cycle with random time offset + all material management |
 | `useBrickShadow.ts`        | Player proximity shadow (configurable XZ threshold)        |
 | `useBrickHitGlow.ts`       | Collision tracking via ref — no React state, no re-renders |
 | `useCollisionDetection.ts` | Death plane check with single-trigger guard                |

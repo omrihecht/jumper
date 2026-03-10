@@ -41,8 +41,8 @@ export const PLAYER = {
 export const PLATFORM = {
   startSize: [4, 0.5, 4] as readonly [number, number, number],
   endSize: [4, 0.5, 4] as readonly [number, number, number],
-  startColor: '#39ff14',
-  endColor: '#ff355e',
+  startColor: '#00ffc8',
+  endColor: '#ff66bb',
 } as const;
 
 export const LIGHTING = {

@@ -27,6 +27,7 @@ Output lands in `dist/jumper`.
 | @react-three/drei | Camera controls, helpers |
 | @react-three/rapier | WASM physics engine |
 | Zustand | Lightweight state management |
+| SCSS Modules | Scoped styling with variables and nesting |
 | Vite 7 + TypeScript | Build tooling |
 | Nx | Task orchestration |
 
@@ -34,7 +35,8 @@ Output lands in `dist/jumper`.
 
 - **Movement** — Arrow keys / WASD, Space to jump, Shift to sprint
 - **Lives** — 3 lives at start (4 total attempts); falling costs 1 life, winning a level grants +1
-- **Win** — Land on the end platform
+- **Levels** — 3 levels of increasing difficulty (wider grid, faster waves, smaller bricks)
+- **Win** — Land on the end platform to advance; complete all 3 levels to win
 - **Game over** — Fall with 0 lives remaining
 
 ## Architecture

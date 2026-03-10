@@ -6,8 +6,9 @@ Zustand store managing all runtime game state, decoupled from rendering.
 
 | File           | Description                                        |
 | -------------- | -------------------------------------------------- |
-| `types.ts`     | TypeScript interfaces: `GamePhase`, `PlayerState`, `GameState`, `GameActions` |
-| `gameStore.ts` | Zustand store with phase transitions, lives, respawn, scoring |
+| `types.ts`       | TypeScript interfaces: `GamePhase`, `PlayerState`, `GameState`, `GameActions` |
+| `gameStore.ts`   | Zustand store with phase transitions, lives, respawn, scoring |
+| `useScreenSync.ts` | Hook that syncs mounted route to `currentScreen` on mount |
 
 ## Game Phase State Machine
 
@@ -16,7 +17,10 @@ Zustand store managing all runtime game state, decoupled from rendering.
 Menu → Playing (startGame — lives reset to 3)
 Playing → Paused (pauseGame)
 Paused → Playing (resumeGame)
-Playing → Won (winGame — triggered by EndPlatform collision, +1 life)
+Paused → Menu (returnToMenu)
+Playing → LevelUp (winGame — non-final level, +1 life)
+LevelUp → Playing (advanceLevel — auto after 2s)
+Playing → Won (winGame — final level, +1 life)
 Playing → Playing (loseLife when lives > 0 — respawn via resetCount)
 Playing → Lost (loseLife when lives = 0)
 Won / Lost → Menu (returnToMenu)
